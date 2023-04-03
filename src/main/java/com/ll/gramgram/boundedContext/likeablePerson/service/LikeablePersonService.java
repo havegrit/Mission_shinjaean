@@ -49,6 +49,7 @@ public class LikeablePersonService {
         return likeablePersonRepository.findByFromInstaMemberId(fromInstaMemberId);
     }
 
+    @Transactional
     public void remove(LikeablePerson likeablePerson) {
         likeablePersonRepository.delete(likeablePerson);
     }
