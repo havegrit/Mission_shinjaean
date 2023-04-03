@@ -4,7 +4,6 @@ import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
-import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -27,7 +25,6 @@ import java.util.List;
 public class LikeablePersonController {
     private final Rq rq;
     private final LikeablePersonService likeablePersonService;
-    private final LikeablePersonRepository likeablePersonRepository;
 
     @GetMapping("/add")
     public String showAdd() {
@@ -55,16 +52,18 @@ public class LikeablePersonController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
+        RsData<LikeablePerson> deleteRsData;
         InstaMember instaMember = rq.getMember().getInstaMember();
         if (instaMember != null) {
             List<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberId(instaMember.getId());
             for (LikeablePerson bit : likeablePerson) {
                 if (bit.getId().equals(id)) {
-                    likeablePersonService.remove(bit);
+                    deleteRsData = likeablePersonService.delete(bit);
+                    return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
                 }
             }
         }
-        return "redirect:/likeablePerson/list";
+        return rq.redirectWithMsg("/likeablePerson/list", "잘못된 접근입니다.");
     }
 
     @GetMapping("/list")

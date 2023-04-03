@@ -50,7 +50,8 @@ public class LikeablePersonService {
     }
 
     @Transactional
-    public void remove(LikeablePerson likeablePerson) {
+    public RsData<LikeablePerson> delete(LikeablePerson likeablePerson) {
         likeablePersonRepository.delete(likeablePerson);
+        return RsData.of("S-1", "데이터를 성공적으로 삭제하였습니다.", likeablePerson);
     }
 }
