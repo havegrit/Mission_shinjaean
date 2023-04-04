@@ -21,6 +21,8 @@
 
 **[접근 방법]**
 
+**- 호감 표시 취소**
+
 호감을 표시하면 'LikeablePerson' 객체를 생성하고, 'LikeablePersonRepository'를 통해 DB에 데이터를 저장하게 된다.
 호감 표시를 취소한다는 것은 이전에 생성되어 DB에 저장된 LikeablePerson 객체 데이터를 LikeablePersonRepository를 통해 DB에서 데이터를 삭제하는 것이다.
 LikeablePersonService에서 LikeablePersonRepository를 통해 DB의 데이터를 삭제하는 메서드를 구현하고, LikeablePersonController에서는 현재 로그인 되어있는 사용자 데이터를 가져와 삭제하려는 LikeablePerson 데이터의 주인이 맞는지 검증하는 과정을 구현해야 할 것이다. 
@@ -42,6 +44,33 @@ LikeablePersonService에서 LikeablePersonRepository를 통해 DB의 데이터�
   => 기본적으로 LikeablePersonService는 @Transactional(readOnly = true) 어노테이션을 사용하기 때문에, 삭제 메서드에 @Transactional 어노테이션을 사용
 
   => 서비스의 삭제 메소드는 성공 메세지와 LikeablePerson 객체 데이터를 가지고 있는 RsData<LikeablePerson> 객체를 반환하여, 성공적으로 데이터를 삭제했을 시, 토스트 메세지를 사용자에게 보여주도록 구현했다. 
+
+**- Google login**
+
+카카오 로그인과 동일하게 개발을 진행하면 될 것으로 생각된다. 구현에 앞서 관련 영상 세 개를 시청하며 'OAuth 2.0'에 대해 간단하게 파악한 후 진행하였다.
+
+1. WEB2 - OAuth 2.0 : 1.수업소개 (https://youtu.be/hm2r6LtUbk8)
+
+2. WEB2 - OAuth 2.0 : 2. 역할 (https://youtu.be/vo_0PW3V5zU)
+
+3. WEB2 - OAuth 2.0 : 3. 등록 (https://youtu.be/_mm5ks5aWQ4)
+
+application.yml 파일 설정하는 방법은 chatGPT를 활용
+
+Q. Spring Boot에서 Google OAuth API를 사용하기위한 application.yml 파일 구성
+
+**[구현]**
+
+- Google Cloud Platform 
+  - 새 프로젝트 생성
+  - 사용자 인증 정보(OAuth client ID) 생성
+  
+    => redirection uri 설정하기
+- application.yml 파일 설정
+
+  => 우리의 서비스에서 Google 계정으로 로그인 하기 위한 설정 작업을 진행
+
+  => Google OAuth Client ID 사용
 
 
 **[특이사항]**
