@@ -19,6 +19,7 @@ spring:
             client-authentication-method: POST
           google:
             client-id: 779926395218-seeha819p5g97t3t1vifmk5ph5d896ij.apps.googleusercontent.com
+            client-secret: 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
             scope:
             client-name: Google
             authorization-grant-type: authorization_code
@@ -30,11 +31,6 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://www.googleapis.com/oauth2/v4/token
-            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute: email
   jpa:
     hibernate:
       ddl-auto: create
