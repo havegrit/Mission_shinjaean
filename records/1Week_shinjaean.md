@@ -13,7 +13,7 @@
 ☑️ Google Login
 - 구글 계정으로 회원가입 및 로그인 가능
 
-    => OAuth 사용
+    => OAuth 2.0 사용
 
 ### 1주차 미션 요약
 
@@ -66,11 +66,18 @@ Q. Spring Boot에서 Google OAuth API를 사용하기위한 application.yml 파�
   - 사용자 인증 정보(OAuth client ID) 생성
   
     => redirection uri 설정하기
+  
 - application.yml 파일 설정
 
   => 우리의 서비스에서 Google 계정으로 로그인 하기 위한 설정 작업을 진행
 
-  => Google OAuth Client ID 사용
+  => Google OAuth Client ID, Secret 사용
+
+  => client-authentication-method 설정은 따로 하지 않는다. 아마 디폴트 설정을 따라가면 되는듯 하다.
+
+  => 카카오와는 다르게 구글은 scope 설정을 지정해줘야 정상적으로 작동하기 때문에 'scope'를 'profile'로 지정해주었다.
+
+  => 최종적으로 'client id', 'client secret', 'scope'만 작성해줘도 잘 작동하는 것으로 보인다. provider 설정도 작성하지 않아도 된다.
 
 
 **[특이사항]**
@@ -81,9 +88,25 @@ Q. Spring Boot에서 Google OAuth API를 사용하기위한 application.yml 파�
   => service를 통해 repository.delete() 메소드를 실행하도록 구현했다. 프로그램이 실행은 되나 delete 쿼리가 실행이 안되는 문제 발생
 
   => service 클래스에 @Transactional(readOnly = true) 어노테이션이 사용되었으므로, 쓰기 작업(likeablePerson 객체 삭제)을 수행하는 메서드에 @Transactional(readOnly=false) 어노테이션을 추가해줘야 한다. "readOnly" 속성은 "false"가 디폴트 값이므로 생략가능
+
 - 문제없이 잘 실행 되다가, OS 업데이트 후 실행이 되지 않는다.
 
   => 정확한 원인을 파악하지는 못 했지만, DB Driver를 mariaDB에서 MySQL로 변경해주니 다시 문제없이 실행된다. 
 
-구현 과정에서 아쉬웠던 점 / 궁금했던 점을 정리합니다.
+- 구글 계정으로 회원가입 실패
+
+  => "/member/login" 페이지에서 '구글 로그인하기' 누르면 구글 계정으로 로그인하는 페이지가 나타나긴 하지만 실제 구글 로그인 후 리디렉션 되어도 회원이 생성되지 않는다.
+
+  => 병순 멘토님 찬스로 google OAuth의 client-authentication-method가 post 방식이 맞는지 생각해보라는 말씀에, 해당 설정을 지우고 실행해봤더니, 확실히 결과는 달라졌다. 그래도 아직 회원은 생성되지 않는다. 더 나아가 리디렉션 된 후에 root 페이지 말고는 작동하지 않는다.
+
+  => 세션을 삭제 해주면, 다시 작동은 하게 된다. 
+
+  => 구글 로그인 후 "/instaMember/connect" 페이지 요청하면 응답이 잘 나오는거 보니, 로그인 되어 인증에는 성공한 거 같은데, 인증만 된 유령 회원이 된다. 아무런 정보도 등록되지 않았고, 인스타 아이디 등록도 되지 않는다.
+
+  => 카카오 로그인 할 때는  'CustomOAuth2UserService'에 오버라이딩 된 'loadUser()' 메소드가 잘 실행되지만, 구글 로그인 시에는 실행이 안되는 것으로 보인다.
+
+  => 또 병순 멘토님 찬스로 application.yml 파일에서 google client 등록 설정 중 scope를 설정하지 않아서 문제가 발생한 것을 알게되었다. "spring.security.oauth2.client.registration.google.scope"를 "profile"로 지정해주어 해결.
+
+  => 추가적으로 카카오는 스코프를 지정하지 않아도 잘 처리해준다. 이거 때문에 구글에도 스코프를 지정하지 않았던 것이 실수였다. 멘토님께서 말씀하시기로 플랫폼 마다 스코프 설정이 조금씩 다르기 때문에 공식문서를 잘 살펴봐야 한다고 말씀해주셨다.
+
 
