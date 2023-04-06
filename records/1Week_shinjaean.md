@@ -119,3 +119,11 @@ Q. Spring Boot에서 Google OAuth API를 사용하기위한 application.yml 파�
 기존 코드의 경우 필요없는 데이터를 가져온다는 것이 문제였다. 현재 세션에 로그인한 사용자의 호감 표시에 대한 모든 데이터를 가져와서 id와 비교후 삭제를 진행했다.
 개선된 코드는 불필요하게 데이터를 가져오지 않고, 필요한 데이터만 가져와 검증을 거쳐 삭제하도록 구현했다.
 검증은 가져온 LikeablePerson 객체의 fromInstaMember 데이터와 현재 세션 사용자의 InstaMember 데이터를 비교하는 것으로 구현했다. 인스타 아이디를 등록하지 않은 사용자 또는 자신의 데이터가 아닌 사용자가 데이터를 삭제하려는 경우 "잘못된 접근입니다."라는 메시지를 출력한다.
+
+OAuth 로그인
+- application.yml 파일 수정
+
+  => 기존에 클라이언트 아이디와 시크릿 코드가 노출되어 있었던 방식에서 환경 변수를 이용하는 방식으로 수정했다.
+      Run > Edit Configurations > Modify options > Add Run Options 다이얼로그에서 Operating Systems 탭에 Environment variables 를 클릭해주면, 환경 변수를 추가할 수 있는 메뉴가 생성된다.
+
+  => 네이버 로그인도 가능하도록 registration 과 provider 설정을 추가해줬다.
