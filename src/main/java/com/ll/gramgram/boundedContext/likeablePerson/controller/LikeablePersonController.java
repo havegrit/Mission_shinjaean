@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/likeablePerson")
@@ -51,19 +52,17 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
+    public String delete(@PathVariable Long id) {
         RsData<LikeablePerson> deleteRsData;
         InstaMember instaMember = rq.getMember().getInstaMember();
-        if (instaMember != null) {
-            List<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberId(instaMember.getId());
-            for (LikeablePerson bit : likeablePerson) {
-                if (bit.getId().equals(id)) {
-                    deleteRsData = likeablePersonService.delete(bit);
-                    return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
-                }
+        Optional<LikeablePerson> likeablePerson = likeablePersonService.findById(id);
+        if (likeablePerson.isPresent()) {
+            if (likeablePerson.get().getFromInstaMember().equals(instaMember)) {
+                deleteRsData = likeablePersonService.delete(likeablePerson.get());
+                return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
             }
         }
-        return rq.redirectWithMsg("/likeablePerson/list", "잘못된 접근입니다.");
+        return rq.redirectWithMsg("/likeablePerson한/list", "잘못된 접근입니다.");
     }
 
     @GetMapping("/list")
