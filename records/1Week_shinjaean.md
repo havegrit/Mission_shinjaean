@@ -183,4 +183,4 @@ authorization-grant-type 속성을 authorization_code 로 지정해주니 네이
 
   => 호감 상대를 삭제할 때, 에러 발생. 
 
-  => form 태그 action url을 정상 작동하게 수정. form 태그에 delete 방식으로 요청하기 위한 input 태그를 추가 
+  => form 태그 action url을 정상 작동하게 수정. form 태그에 delete 방식으로 요청하기 위한 input 태그를 추가
