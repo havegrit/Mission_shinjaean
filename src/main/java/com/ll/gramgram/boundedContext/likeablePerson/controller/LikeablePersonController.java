@@ -12,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -49,16 +52,18 @@ public class LikeablePersonController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
+        RsData<LikeablePerson> deleteRsData;
         InstaMember instaMember = rq.getMember().getInstaMember();
         if (instaMember != null) {
-            List<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberId(instaMember.getId()); //
+            List<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberId(instaMember.getId());
             for (LikeablePerson bit : likeablePerson) {
                 if (bit.getId().equals(id)) {
-                    likeablePersonService.remove(bit);
+                    deleteRsData = likeablePersonService.delete(bit);
+                    return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
                 }
             }
         }
-        return "redirect:/likeablePerson/list";
+        return rq.redirectWithMsg("/likeablePerson/list", "잘못된 접근입니다.");
     }
 
     @GetMapping("/list")
