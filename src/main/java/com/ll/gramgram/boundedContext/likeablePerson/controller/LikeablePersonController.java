@@ -5,6 +5,7 @@ import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
+import com.ll.gramgram.boundedContext.member.entity.Member;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,16 +54,15 @@ public class LikeablePersonController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
-        RsData<LikeablePerson> deleteRsData;
-        InstaMember instaMember = rq.getMember().getInstaMember();
-        Optional<LikeablePerson> likeablePerson = likeablePersonService.findById(id);
-        if (likeablePerson.isPresent()) {
-            if (likeablePerson.get().getFromInstaMember().equals(instaMember)) {
-                deleteRsData = likeablePersonService.delete(likeablePerson.get());
-                return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
-            }
+        Member loginMember = rq.getMember();
+        if (loginMember.getInstaMember() == null) {
+            return rq.historyBack(RsData.of("F-1","잘못된 접근입니다."));
         }
-        return rq.redirectWithMsg("/likeablePerson한/list", "잘못된 접근입니다.");
+        RsData deleteRsData = likeablePersonService.delete(loginMember.getInstaMember(), id);
+        if (deleteRsData.isFail()) {
+            return rq.historyBack(deleteRsData);
+        }
+        return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
     }
 
     @GetMapping("/list")

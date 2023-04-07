@@ -51,9 +51,19 @@ public class LikeablePersonService {
     }
 
     @Transactional
-    public RsData<LikeablePerson> delete(LikeablePerson likeablePerson) {
-        likeablePersonRepository.delete(likeablePerson);
-        return RsData.of("S-1", "데이터를 성공적으로 삭제하였습니다.", likeablePerson);
+    public RsData<LikeablePerson> delete(InstaMember instaMember, Long id) {
+        Optional<LikeablePerson> likeablePerson = likeablePersonRepository.findById(id);
+        Long actorInstaMemberId = instaMember.getId();
+        if (likeablePerson.isEmpty()) {
+            return RsData.of("F-3", "잘못된 접근입니다.");
+        }
+        Long fromInstaMemberId = likeablePerson.get().getFromInstaMember().getId();
+        if (!fromInstaMemberId.equals(actorInstaMemberId)) {
+            return RsData.of("F-4", "데이터를 삭제할 권한이 없습니다.");
+        }
+        String cancelTargetUsername = likeablePerson.get().getFromInstaMember().getUsername();
+        likeablePersonRepository.delete(likeablePerson.get());
+        return RsData.of("S-1", "%s님에 대한 데이터를 성공적으로 삭제했습니다.".formatted(cancelTargetUsername));
     }
 
     public Optional<LikeablePerson> findById(Long id) {
