@@ -129,10 +129,20 @@ OAuth 로그인
 
   => 기존에 클라이언트 아이디와 시크릿 코드가 노출되어 있었던 방식에서 환경 변수를 이용하는 방식으로 수정했다.
       Run > Edit Configurations > Modify options > Add Run Options 다이얼로그에서 Operating Systems 탭에 Environment variables 를 클릭해주면, 환경 변수를 추가할 수 있는 메뉴가 생성된다.
-<br><br>
-  => 네이버 로그인도 가능하도록 registration 과 provider 설정을 추가해줬다.
+  <br><br>
+  => 네이버 로그인도 가능하도록 registration 과 provider 설정을 추가했다.
 
 이슈 사항
+
+- 네이버 로그인 실패
+
+  => registration 설정이 잘못 이었는지, 인증 화면으로는 넘어가는데, 리디렉션 되어 넘어오면 계속 에러를 발생시켰다.
+  
+  => 더 정확한 원인을 파악하기 위해 "application.yml" 파일에 "org.springframework.security: trace" 설정을 추가하여, 시큐리티 관련 자세한 로그를 확인하고자 했다.
+로그가 엄청 길었지만, 마지막 부분에 authorization-grant-type 속성의 데이터가 null일 수 없다는 메시지를 확인했고, 설정 파일을 살펴봤더니, authorization-grant-type 속성이 지정이 되어있지 않았다.
+authorization-grant-type 속성을 authorization_code 로 지정해주니 네이버 로그인이 정상적으로 작동하기 시작했다.
+
+
 - 호감 표시 취소 실패 메시지 출력
 
   => 데이터 삭제에 실패했을 때, 메시지가 출력되지 않는다. 원인이 뭘까 ?
