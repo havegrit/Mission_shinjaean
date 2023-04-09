@@ -5,6 +5,7 @@ import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
+import com.ll.gramgram.boundedContext.member.entity.Member;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,20 +51,17 @@ public class LikeablePersonController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
-        RsData<LikeablePerson> deleteRsData;
-        InstaMember instaMember = rq.getMember().getInstaMember();
-        if (instaMember != null) {
-            List<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberId(instaMember.getId());
-            for (LikeablePerson bit : likeablePerson) {
-                if (bit.getId().equals(id)) {
-                    deleteRsData = likeablePersonService.delete(bit);
-                    return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
-                }
-            }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        Member loginMember = rq.getMember();
+        if (loginMember.getInstaMember() == null) {
+            return rq.historyBack(RsData.of("F-1","잘못된 접근입니다."));
         }
-        return rq.redirectWithMsg("/likeablePerson/list", "잘못된 접근입니다.");
+        RsData deleteRsData = likeablePersonService.delete(loginMember.getInstaMember(), id);
+        if (deleteRsData.isFail()) {
+            return rq.historyBack(deleteRsData);
+        }
+        return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
     }
 
     @GetMapping("/list")
@@ -72,7 +70,7 @@ public class LikeablePersonController {
 
         // 인스타인증을 했는지 체크
         if (instaMember != null) {
-            List<LikeablePerson> likeablePeople = likeablePersonService.findByFromInstaMemberId(instaMember.getId());
+            List<LikeablePerson> likeablePeople = instaMember.getFromLikeablePeople();
             model.addAttribute("likeablePeople", likeablePeople);
         }
 

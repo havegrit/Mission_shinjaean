@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +30,12 @@ public class LikeablePersonService {
             return RsData.of("F-1", "본인을 호감상대로 등록할 수 없습니다.");
         }
 
+        InstaMember fromInstaMember = member.getInstaMember();
         InstaMember toInstaMember = instaMemberService.findByUsernameOrCreate(username).getData();
 
         LikeablePerson likeablePerson = LikeablePerson
                 .builder()
-                .fromInstaMember(member.getInstaMember()) // 호감을 표시하는 사람의 인스타 멤버
+                .fromInstaMember(fromInstaMember) // 호감을 표시하는 사람의 인스타 멤버
                 .fromInstaMemberUsername(member.getInstaMember().getUsername()) // 중요하지 않음
                 .toInstaMember(toInstaMember) // 호감을 받는 사람의 인스타 멤버
                 .toInstaMemberUsername(toInstaMember.getUsername()) // 중요하지 않음
@@ -41,6 +43,9 @@ public class LikeablePersonService {
                 .build();
 
         likeablePersonRepository.save(likeablePerson); // 저장
+
+        fromInstaMember.addFromLikeablePerson(likeablePerson);
+        toInstaMember.addToLikeablePerson(likeablePerson);
 
         return RsData.of("S-1", "입력하신 인스타유저(%s)를 호감상대로 등록되었습니다.".formatted(username), likeablePerson);
     }
@@ -50,8 +55,22 @@ public class LikeablePersonService {
     }
 
     @Transactional
-    public RsData<LikeablePerson> delete(LikeablePerson likeablePerson) {
-        likeablePersonRepository.delete(likeablePerson);
-        return RsData.of("S-1", "데이터를 성공적으로 삭제하였습니다.", likeablePerson);
+    public RsData<LikeablePerson> delete(InstaMember instaMember, Long id) {
+        Optional<LikeablePerson> likeablePerson = likeablePersonRepository.findById(id);
+        Long actorInstaMemberId = instaMember.getId();
+        if (likeablePerson.isEmpty()) {
+            return RsData.of("F-3", "잘못된 접근입니다.");
+        }
+        Long fromInstaMemberId = likeablePerson.get().getFromInstaMember().getId();
+        if (!fromInstaMemberId.equals(actorInstaMemberId)) {
+            return RsData.of("F-4", "데이터를 삭제할 권한이 없습니다.");
+        }
+        String cancelTargetUsername = likeablePerson.get().getFromInstaMember().getUsername();
+        likeablePersonRepository.delete(likeablePerson.get());
+        return RsData.of("S-1", "%s님에 대한 데이터를 성공적으로 삭제했습니다.".formatted(cancelTargetUsername));
+    }
+
+    public Optional<LikeablePerson> findById(Long id) {
+        return likeablePersonRepository.findById(id);
     }
 }
