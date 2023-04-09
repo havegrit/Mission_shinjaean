@@ -159,3 +159,25 @@ authorization-grant-type 속성을 authorization_code 로 지정해주니 네이
   => 메소드 자체가 클라이언트의 요청에 문제가 있을 때, 이전 페이지로 보내는 기능이기 때문에 400 상태 코드를 반환하는 것이 맞다. 메소드 실행 시 기존에는 200 상태 코드를 반환했지만, 400 상태 코드를 반환하도록 변경했다.
 
   => 이와 관련해서 테스트 케이스를 추가했다. 존재하지 않는 데이터를 삭제했을 때, 정상적으로 400 상태 코드를 반환하는지, 권한이 없는 데이터를 삭제 했을 때, 400 상태 코드를 반환하고, 실제로 데이터가 삭제되지 않는지 테스트를 진행했다.
+
+
+- 양방향 관계 생성(InstaMember::fromLikeablePeople & LikeablePerson::fromInstaMember/ InstaMember::toLikeablePeople & LikeablePerson::toInstaMember)
+
+  => 인스타 멤버에 1:N 관계를 추가. 내가 호감 표시한 사람들(fromLikeablePeople)과 나를 호감 표시한 사람들(toLikeablePeople) 필드 추가
+
+  => 수정한 엔티티 데이터에 맞춰, 호감 목록 페이지에서도 데이터를 서비스의 findByFromInstaMemberId() 메소드를 통해 가져오던 방식을 InstaMember 객체의 fromLikeabelPeople 필드 데이터를 가져오는 방법으로 변경했다.
+
+  => 서비스 like() 메소드 수정. 호감을 표시하게 되면 InstaMember 객체의 fromLikeablePeople과 toLikeablePeople(각각 다른 객체, 전자는 호감을 표시한 사람, 후자는 호감 표시의 대상)에 데이터를 추가해야 한다. 그렇기에 like() 메소드가 실행될 때, 호감을 표시하는 사람(fromInstaMember) 객체에는 fromLikeablePeople, 호감의 대상(toInstaMember) 객체에는 toLikeablePeople에 likeablePerson 객체를 똑같이 추가해야 한다.
+
+  => 양방향 관계(InstaMember의 fromLikeablePeople(many)와 LikeablePerson의 fromInstaMember(one))를 설정하게 되면, @ToString 어노테이션을 작성한 LikeablePerson 객체 데이터를 출력할 때, fromInstaMember와 toInstaMember 필드가 무한으로 재귀호출 되는 문제가 발생한다. InstaMember 객체는 fromLikeablePeople 필드와 toLikeablePeople 필드가 존재하는데, 이 데이터는 또 LikeablePerson 객체를 호출하게 된다. 그래서 LikeablePerson 엔티티에 fromInstaMember와 toInstaMember 필드에 @ToString.Exclude 어노테이션을 추가하여 재귀호출 되는 것을 방지했다.
+
+  => 호감표시 페이지 에러. 원인은 기존에 현 세션에 로그인 멤버의 인스타 멤버(InstaMember) 객체를 JSON화 하면서 무한 재귀 호출 문제가 또 발생하기 때문. 어차피 호감표시 페이지에서는 사용자가 등록한 인스타 아이디만 필요로 하기 때문에 InstaMember의 username을 가져오도록 수정했다.
+
+  => 공통 헤더 부분에 사용자가 호감 표시한 사람의 수와 나를 호감 표시한 사람의 수를 표시하도록 수정했다.
+
+
+- 호감 표시 취소
+
+  => 호감 상대를 삭제할 때, 에러 발생. 
+
+  => form 태그 action url을 정상 작동하게 수정. form 태그에 delete 방식으로 요청하기 위한 input 태그를 추가 
