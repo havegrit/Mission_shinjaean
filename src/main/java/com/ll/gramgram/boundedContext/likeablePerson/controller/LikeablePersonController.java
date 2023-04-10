@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/likeablePerson")
@@ -43,6 +42,9 @@ public class LikeablePersonController {
         Member loginUser = rq.getMember();
         Long userInstaMemberId = loginUser.getInstaMember().getId();
         List<LikeablePerson> likeablePersonList = likeablePersonService.findByFromInstaMemberId(userInstaMemberId);
+        if (likeablePersonList.size() >= 10) {
+            return rq.historyBack(RsData.of("F-2", "호감 상대는 10명 까지 등록할 수 없습니다."));
+        }
         String registeringUsername = addForm.getUsername().trim();
         Optional<LikeablePerson> likeablePerson = likeablePersonList.stream()
                 .filter(e -> e.getToInstaMember().getUsername().equals(registeringUsername))
