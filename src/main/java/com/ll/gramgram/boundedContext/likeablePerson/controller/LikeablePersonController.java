@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/likeablePerson")
@@ -38,7 +40,17 @@ public class LikeablePersonController {
 
     @PostMapping("/add")
     public String add(@Valid AddForm addForm) {
-        RsData<LikeablePerson> createRsData = likeablePersonService.like(rq.getMember(), addForm.getUsername(), addForm.getAttractiveTypeCode());
+        Member loginUser = rq.getMember();
+        Long userInstaMemberId = loginUser.getInstaMember().getId();
+        List<LikeablePerson> likeablePersonList = likeablePersonService.findByFromInstaMemberId(userInstaMemberId);
+        String registeringUsername = addForm.getUsername().trim();
+        Optional<LikeablePerson> likeablePerson = likeablePersonList.stream()
+                .filter(e -> e.getToInstaMember().getUsername().equals(registeringUsername))
+                .findFirst();
+        if (likeablePerson.isPresent()) {
+            return rq.historyBack(RsData.of("F-1", "(%s)님은 이미 호감 상대로 등록한 회원입니다.".formatted(registeringUsername)));
+        }
+        RsData<LikeablePerson> createRsData = likeablePersonService.like(rq.getMember(), registeringUsername, addForm.getAttractiveTypeCode());
 
         if (createRsData.isFail()) {
             return rq.historyBack(createRsData);
