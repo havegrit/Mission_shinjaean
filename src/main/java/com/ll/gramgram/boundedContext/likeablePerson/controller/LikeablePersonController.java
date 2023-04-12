@@ -41,18 +41,24 @@ public class LikeablePersonController {
     public String add(@Valid AddForm addForm) {
         Member loginUser = rq.getMember();
         Long userInstaMemberId = loginUser.getInstaMember().getId();
+        //TODO: repository.findByFromInstaMemberIdAndToInstaMember_username()
         List<LikeablePerson> likeablePersonList = likeablePersonService.findByFromInstaMemberId(userInstaMemberId);
-        if (likeablePersonList.size() >= 10) {
-            return rq.historyBack(RsData.of("F-2", "호감 상대는 10명 까지 등록할 수 없습니다."));
-        }
         String registeringUsername = addForm.getUsername().trim();
         Optional<LikeablePerson> likeablePerson = likeablePersonList.stream()
                 .filter(e -> e.getToInstaMember().getUsername().equals(registeringUsername))
                 .findFirst();
         if (likeablePerson.isPresent()) {
+            if (likeablePerson.get().getAttractiveTypeCode() != addForm.getAttractiveTypeCode()) {
+                RsData editRsData = likeablePersonService.modifyAttractionTypeCode(likeablePerson.get(), addForm.getAttractiveTypeCode());
+                return rq.redirectWithMsg("/likeablePerson/list", editRsData);
+            }
             return rq.historyBack(RsData.of("F-1", "(%s)님은 이미 호감 상대로 등록한 회원입니다.".formatted(registeringUsername)));
         }
-        RsData<LikeablePerson> createRsData = likeablePersonService.like(rq.getMember(), registeringUsername, addForm.getAttractiveTypeCode());
+        //TODO: fix hard coding
+        if (likeablePersonList.size() >= 10) {
+            return rq.historyBack(RsData.of("F-2", "호감 상대는 10명 까지 등록할 수 없습니다."));
+        }
+        RsData createRsData = likeablePersonService.like(rq.getMember(), registeringUsername, addForm.getAttractiveTypeCode());
 
         if (createRsData.isFail()) {
             return rq.historyBack(createRsData);

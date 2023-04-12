@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,5 +73,25 @@ public class LikeablePersonService {
 
     public Optional<LikeablePerson> findById(Long id) {
         return likeablePersonRepository.findById(id);
+    }
+
+    @Transactional
+    public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractionTypeCode){
+        String beforeAttractionType = attractionTypeCodeToString(likeablePerson.getAttractiveTypeCode());
+        String afterAttractionType = attractionTypeCodeToString(attractionTypeCode);
+        likeablePerson.setAttractiveTypeCode(attractionTypeCode);
+        likeablePerson.setModifyDate(LocalDateTime.now());
+        likeablePersonRepository.save(likeablePerson);
+        return RsData.of("S-2", "%s에 대한 호감 사유를 %s에서 %s(으)로 변경합니다.".formatted(likeablePerson.getToInstaMember().getUsername(), beforeAttractionType, afterAttractionType));
+    }
+
+    public String attractionTypeCodeToString(int attractionTypeCode) {
+        String attractionType;
+        switch (attractionTypeCode) {
+            case 1 -> attractionType = "외모";
+            case 2 -> attractionType = "성격";
+            default -> attractionType = "능력";
+        }
+        return attractionType;
     }
 }
