@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
+import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
@@ -51,8 +52,7 @@ public class LikeablePersonController {
             }
             return rq.historyBack(RsData.of("F-1", "(%s)님은 이미 호감 상대로 등록한 회원입니다.".formatted(registeringUsername)));
         }
-        //TODO: fix hard coding
-        if (likeablePersonList.size() >= 10) {
+        if (likeablePersonList.size() >= AppConfig.getLikeablePersonFromMax()) {
             return rq.historyBack(RsData.of("F-2", "호감 상대는 10명 까지 등록할 수 없습니다."));
         }
         RsData createRsData = likeablePersonService.like(rq.getMember(), registeringUsername, addForm.getAttractiveTypeCode());
