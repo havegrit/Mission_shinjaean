@@ -41,12 +41,9 @@ public class LikeablePersonController {
     public String add(@Valid AddForm addForm) {
         Member loginUser = rq.getMember();
         Long userInstaMemberId = loginUser.getInstaMember().getId();
-        //TODO: repository.findByFromInstaMemberIdAndToInstaMember_username()
         List<LikeablePerson> likeablePersonList = likeablePersonService.findByFromInstaMemberId(userInstaMemberId);
         String registeringUsername = addForm.getUsername().trim();
-        Optional<LikeablePerson> likeablePerson = likeablePersonList.stream()
-                .filter(e -> e.getToInstaMember().getUsername().equals(registeringUsername))
-                .findFirst();
+        Optional<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberIdAndToInstaMember_username(userInstaMemberId, registeringUsername);
         if (likeablePerson.isPresent()) {
             if (likeablePerson.get().getAttractiveTypeCode() != addForm.getAttractiveTypeCode()) {
                 RsData editRsData = likeablePersonService.modifyAttractionTypeCode(likeablePerson.get(), addForm.getAttractiveTypeCode());

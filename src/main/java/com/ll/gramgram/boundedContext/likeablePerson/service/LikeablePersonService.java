@@ -94,4 +94,8 @@ public class LikeablePersonService {
         }
         return attractionType;
     }
+
+    public Optional<LikeablePerson> findByFromInstaMemberIdAndToInstaMember_username(Long instaMemberId, String toInstaMemberUsername) {
+        return likeablePersonRepository.findByFromInstaMemberIdAndToInstaMember_username(instaMemberId, toInstaMemberUsername);
+    }
 }
