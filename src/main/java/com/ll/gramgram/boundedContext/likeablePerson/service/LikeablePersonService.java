@@ -77,22 +77,11 @@ public class LikeablePersonService {
 
     @Transactional
     public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractionTypeCode){
-        String beforeAttractionType = attractionTypeCodeToString(likeablePerson.getAttractiveTypeCode());
-        String afterAttractionType = attractionTypeCodeToString(attractionTypeCode);
+        String beforeAttractionType = likeablePerson.getAttractiveTypeDisplayName();
         likeablePerson.setAttractiveTypeCode(attractionTypeCode);
+        String afterAttractionType = likeablePerson.getAttractiveTypeDisplayName();
         likeablePersonRepository.save(likeablePerson);
         return RsData.of("S-2", "%s에 대한 호감 사유를 %s에서 %s(으)로 변경합니다.".formatted(likeablePerson.getToInstaMember().getUsername(), beforeAttractionType, afterAttractionType));
-    }
-
-    //TODO: likeablePerson.getAttractiveTypeDisplayName() 메소드로 이미 구현되어 있음. 메소드 삭제 필요.
-    public String attractionTypeCodeToString(int attractionTypeCode) {
-        String attractionType;
-        switch (attractionTypeCode) {
-            case 1 -> attractionType = "외모";
-            case 2 -> attractionType = "성격";
-            default -> attractionType = "능력";
-        }
-        return attractionType;
     }
 
     public Optional<LikeablePerson> findByFromInstaMemberIdAndToInstaMember_username(Long instaMemberId, String toInstaMemberUsername) {

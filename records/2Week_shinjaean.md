@@ -203,7 +203,10 @@
     => 서비스 클래스에 modifyDate 세팅하는 코드 삭제
 
 
--[ ] service class - 불필요한 메서드 삭제
+-[x] service class - 불필요한 메서드 삭제
+
+    => 중복되는 기능의 메소드는 삭제하고, 기존에 LikeablePerson class에 작성되어 있던 getAttractiveTypeDisplayName() 메소드를 이용하는 방식으로 코드를 수정
+
 
 -[ ] InstaMember.fromLikeablePeople 필드
 
