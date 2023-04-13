@@ -213,6 +213,16 @@
     => 컨트롤러 클래스에서 사용자의 모든 호감 데이터를 가져올 때, findByFromInstaMemberId() 메소드를 통해 가져왔던 것을 InstaMember 객체의 fromLikeablePeople 필드 데이터를 가져오는 것으로 대체
 
 
--[ ] 네이버 로그인 시, response 데이터에서 id키 값만 추출하여 username 으로 만들 
+-[x] application.yml 대문자 'L'을 소문자 'l'로 변경
+
+    => Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'custom.likeablePerson.from.max' in value "${custom.likeablePerson.from.max}"
+    
+    => 에러 발견. placeholder를 해결할 수 없다는 말 인데, application.yml 파일에 작성한 내용과 placeholder가 대소문자까지 완전 동일해야함. 
+
+    => custom.'L'ikeablePerson.from.max: 10
+
+    => custom.'l'ikeablePerson.from.max: 10
+
+-[ ] 네이버 로그인 시, response 데이터에서 id키 값만 추출하여 username 으로 만들기
 
 -[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.

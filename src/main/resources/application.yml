@@ -59,6 +59,6 @@ logging:
     org.hibernate.orm.jdbc.extract: TRACE
     org.springframework.security: trace
 custom:
-  LikeablePerson:
+  likeablePerson:
     from:
       max: 10
