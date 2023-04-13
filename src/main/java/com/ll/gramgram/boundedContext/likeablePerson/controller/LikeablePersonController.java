@@ -42,6 +42,7 @@ public class LikeablePersonController {
     public String add(@Valid AddForm addForm) {
         Member loginUser = rq.getMember();
         Long userInstaMemberId = loginUser.getInstaMember().getId();
+        //TODO: lkeablePeople 필드 데이터 사용하기
         List<LikeablePerson> likeablePersonList = likeablePersonService.findByFromInstaMemberId(userInstaMemberId);
         String registeringUsername = addForm.getUsername().trim();
         Optional<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberIdAndToInstaMember_username(userInstaMemberId, registeringUsername);
