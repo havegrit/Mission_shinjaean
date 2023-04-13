@@ -24,7 +24,6 @@ public class LikeablePerson {
     private Long id;
     @CreatedDate
     private LocalDateTime createDate;
-    @Setter
     @LastModifiedDate
     private LocalDateTime modifyDate;
     @ToString.Exclude

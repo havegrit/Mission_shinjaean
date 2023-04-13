@@ -194,8 +194,19 @@
 
     => 리팩토링 진행하면서 구현 예정.
 
-**[수정 사항]**
+**[리팩토링]**
 
-- LikeablePersonController - 액션 메서드 add()
+-[x] modifyDate 필드 세터 관련
+    
+    => 필드에 @Setter 어노테이션 삭제
 
-    => findByFromInstaMemberId() 메서드로 사용자의 인스타 호감 표시 데이터를 전부 가져오도록 했는데, 지난 양방향 관계 설정하면서 만든, fromLikeablePeople 필드 데이터(사용자가 호감을 표시해서 생긴 데이터 전부)를 통해 가져오면 훨씬 편리할 것 같다.
+    => 서비스 클래스에 modifyDate 세팅하는 코드 삭제
+
+
+-[ ] service class - 불필요한 메서드 삭제
+
+-[ ] InstaMember.fromLikeablePeople 필드
+
+-[ ] 네이버 로그인 시, response 데이터에서 id키 값만 추출하여 username 으로 만들 
+
+-[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.

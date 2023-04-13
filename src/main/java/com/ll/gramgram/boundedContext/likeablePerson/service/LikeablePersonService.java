@@ -80,8 +80,6 @@ public class LikeablePersonService {
         String beforeAttractionType = attractionTypeCodeToString(likeablePerson.getAttractiveTypeCode());
         String afterAttractionType = attractionTypeCodeToString(attractionTypeCode);
         likeablePerson.setAttractiveTypeCode(attractionTypeCode);
-        //TODO: setter 필요없음. 삭제 필요.
-        likeablePerson.setModifyDate(LocalDateTime.now());
         likeablePersonRepository.save(likeablePerson);
         return RsData.of("S-2", "%s에 대한 호감 사유를 %s에서 %s(으)로 변경합니다.".formatted(likeablePerson.getToInstaMember().getUsername(), beforeAttractionType, afterAttractionType));
     }
