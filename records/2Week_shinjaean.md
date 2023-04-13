@@ -223,6 +223,18 @@
 
     => custom.'l'ikeablePerson.from.max: 10
 
--[ ] 네이버 로그인 시, response 데이터에서 id키 값만 추출하여 username 으로 만들기
+-[x] 네이버 로그인 시, response 데이터에서 id키 값만 추출하여 username 으로 만들기
+
+    => 네이버 OAuth API를 통해 전달 받는 데이터(프로필) 중 id 데이터를 username의 일부로 사용하도록 구현
+
+    => id 데이터는 OAuth2User 객체를 통해 전달받는 데이터(Name, Granted Authorities, User Attributes) 중 User Attributes의 response 키와 맵핑되어 저장되어 있는데, OAuth2User 클래스 getAttributes(String name) 메소드를 통해 User Attributes의 name(여기서는 response)키와 맵핑된 데이터(프로필 데이터)를 가져온다. 
+
+    => 그렇게 가져온 LinkedHashMap 타입의 response 데이터 안에는 또 프로필 데이터(id, email, name)가 존재한다. 데이터를 가져오기 위해서 LinkedHashMap<String, String> 타입 변수에 저장한다.
+    ````
+    ❓ 한 가지 의문이 있는데, 
+    "oAuth2User.getAttribute("response").getClass() = class java.util.LinkedHashMap"
+    getAttribute() 메소드를 통해 가져온 response는 LinkedHashMap 타입의 데이터는 맞지만, LinkedHashMap<String, String>으로 형변환이 되어야 key 데이터로 value 데이터를 가져올 수 있다.
+    ````
+    => id 데이터를 가져오기 위해 get(key) 메소드를 사용했다.
 
 -[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.
