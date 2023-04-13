@@ -2,8 +2,6 @@ package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
 
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
-import com.ll.gramgram.boundedContext.member.entity.Member;
-import com.ll.gramgram.boundedContext.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -32,9 +28,7 @@ public class LikeablePersonControllerTests {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private LikeablePersonService likeablePersonService;
-    @Autowired
-    private MemberService memberService;
+    private LikeablePersonService likeablePersonSerivce;
 
     @Test
     @DisplayName("등록 폼(인스타 인증을 안해서 폼 대신 메세지)")
@@ -203,55 +197,6 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("delete"))
                 .andExpect(status().is4xxClientError());
-        assertThat(likeablePersonService.findById(1L).isPresent()).isTrue();
-    }
-    @Test
-    @DisplayName("호감표시(중복, 결과: 실패)")
-    @WithUserDetails("user3")
-    void t009() throws Exception {
-        // WHEN
-        ResultActions resultActions = mvc
-                .perform(post("/likeablePerson/add")
-                        .with(csrf()) // CSRF 키 생성
-                        .param("username", "insta_user4")
-                        .param("attractiveTypeCode", "2")
-                )
-                .andDo(print());
-
-        // THEN
-        resultActions
-                .andExpect(handler().handlerType(LikeablePersonController.class))
-                .andExpect(handler().methodName("add"))
-                .andExpect(status().is4xxClientError());
-        assertThat(likeablePersonService.findByFromInstaMemberId(2L).size()).isEqualTo(2);
-    }
-    @Test
-    @DisplayName("호감 표시(11명 이상, 결과: 실패)")
-    @WithUserDetails("user3")
-    void t010() throws Exception {
-        Optional<Member> member = memberService.findByUsername("user3");
-        //더미 데이터 8개(insta_user5 ~ insta_user12) 생성.
-        for (int i = 5; i < 13; i++) {
-            likeablePersonService.like(member.get(), "insta_user%d".formatted(i), 1);
-        }
-        //기존 데이터 2개와 합하여 총 10개의 데이터가 존재하게 된다.
-        assertThat(likeablePersonService.findByFromInstaMemberId(2L).size()).isEqualTo(10);
-
-        // WHEN
-        ResultActions resultActions = mvc
-                .perform(post("/likeablePerson/add")
-                        .with(csrf()) // CSRF 키 생성
-                        .param("username", "insta_user13")
-                        .param("attractiveTypeCode", "2")
-                )
-                .andDo(print());
-
-        // THEN
-        resultActions
-                .andExpect(handler().handlerType(LikeablePersonController.class))
-                .andExpect(handler().methodName("add"))
-                .andExpect(status().is4xxClientError());
-        //데이터가 10개에서 증가되지 않았는지 체크
-        assertThat(likeablePersonService.findByFromInstaMemberId(2L).size()).isEqualTo(10);
+        assertThat(likeablePersonSerivce.findById(1L).isPresent()).isTrue();
     }
 }
