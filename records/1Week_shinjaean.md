@@ -88,9 +88,6 @@ Q. Spring Boot에서 Google OAuth API를 사용하기위한 application.yml 파�
   => service를 통해 repository.delete() 메소드를 실행하도록 구현했다. 프로그램이 실행은 되나 delete 쿼리가 실행이 안되는 문제 발생
 
   => service 클래스에 @Transactional(readOnly = true) 어노테이션이 사용되었으므로, 쓰기 작업(likeablePerson 객체 삭제)을 수행하는 메서드에 @Transactional(readOnly=false) 어노테이션을 추가해줘야 한다. "readOnly" 속성은 "false"가 디폴트 값이므로 생략가능
-- 문제없이 잘 실행 되다가, OS 업데이트 후 실행이 되지 않는다.
-
-  => 정확한 원인을 파악하지는 못 했지만, DB Driver를 mariaDB에서 MySQL로 변경해주니 다시 문제없이 실행된다. 
 
 - 문제없이 잘 실행 되다가, OS 업데이트 후 실행이 되지 않는다.
 
@@ -183,4 +180,4 @@ authorization-grant-type 속성을 authorization_code 로 지정해주니 네이
 
   => 호감 상대를 삭제할 때, 에러 발생. 
 
-  => form 태그 action url을 정상 작동하게 수정. form 태그에 delete 방식으로 요청하기 위한 input 태그를 추가
+  => form 태그 action url을 정상 작동하게 수정. form 태그에 delete 방식으로 요청하기 위한 input 태그를 추가 
