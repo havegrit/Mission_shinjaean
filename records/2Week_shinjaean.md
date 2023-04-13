@@ -208,7 +208,10 @@
     => 중복되는 기능의 메소드는 삭제하고, 기존에 LikeablePerson class에 작성되어 있던 getAttractiveTypeDisplayName() 메소드를 이용하는 방식으로 코드를 수정
 
 
--[ ] InstaMember.fromLikeablePeople 필드
+-[x] InstaMember.fromLikeablePeople 필드
+
+    => 컨트롤러 클래스에서 사용자의 모든 호감 데이터를 가져올 때, findByFromInstaMemberId() 메소드를 통해 가져왔던 것을 InstaMember 객체의 fromLikeablePeople 필드 데이터를 가져오는 것으로 대체
+
 
 -[ ] 네이버 로그인 시, response 데이터에서 id키 값만 추출하여 username 으로 만들 
 

@@ -41,11 +41,10 @@ public class LikeablePersonController {
     @PostMapping("/add")
     public String add(@Valid AddForm addForm) {
         Member loginUser = rq.getMember();
-        Long userInstaMemberId = loginUser.getInstaMember().getId();
-        //TODO: lkeablePeople 필드 데이터 사용하기
-        List<LikeablePerson> likeablePersonList = likeablePersonService.findByFromInstaMemberId(userInstaMemberId);
+        InstaMember userInstaMember = loginUser.getInstaMember();
+        List<LikeablePerson> likeablePersonList = userInstaMember.getFromLikeablePeople();
         String registeringUsername = addForm.getUsername().trim();
-        Optional<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberIdAndToInstaMember_username(userInstaMemberId, registeringUsername);
+        Optional<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberIdAndToInstaMember_username(userInstaMember.getId(), registeringUsername);
         if (likeablePerson.isPresent()) {
             if (likeablePerson.get().getAttractiveTypeCode() != addForm.getAttractiveTypeCode()) {
                 RsData editRsData = likeablePersonService.modifyAttractionTypeCode(likeablePerson.get(), addForm.getAttractiveTypeCode());
