@@ -255,6 +255,9 @@
 
     => 컨트롤러는 사용자의 InstaMember, 삭제하려는 LikeablePerson 객체의 id 데이터를 서비스의 canActorDelete() 메소드로 보내, 우선 삭제가 가능한지 검증을 거치도록 한 후, 문제가 없다면 서비스의 delete() 메소드로 likeablePerson 객체를 전달하여 삭제하는 과정을 진행하고, 최종적으로 성공 메시지를 출력하고 "/likeablePerson/list" 으로 리디렉션 된다.
 
+-[x] LikeablePerson 데이터가 삭제될 때, fromInstaMember/toInstaMember 객체의 fromLikeablePeople/toLikeablePeople 데이터도 삭제
+
+    => 서비스의 delete() 메소드가 실행되어 repository에서 삭제 작업을 진행하기 전에 fromInstaMember/toInstaMember 객체의 fromLikeablePeople/toLikeablePeople 데이터를 삭제하도록 구현했다.
 
 -[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.
 

@@ -54,6 +54,8 @@ public class LikeablePersonService {
     @Transactional
     public RsData delete(LikeablePerson likeablePerson) {
         String cancelTargetUsername = likeablePerson.getToInstaMember().getUsername();
+        likeablePerson.getFromInstaMember().removeFromLikeablePerson(likeablePerson);
+        likeablePerson.getToInstaMember().removeToLikeablePerson(likeablePerson);
         likeablePersonRepository.delete(likeablePerson);
         return RsData.of("S-1", "%s님에 대한 데이터를 성공적으로 삭제했습니다.".formatted(cancelTargetUsername));
     }
