@@ -71,11 +71,11 @@ public class LikeablePersonController {
         if (loginMember.getInstaMember() == null) {
             return rq.historyBack(RsData.of("F-1","잘못된 접근입니다."));
         }
-        RsData deleteRsData = likeablePersonService.delete(loginMember.getInstaMember(), id);
+        RsData<LikeablePerson> deleteRsData = likeablePersonService.canActorDelete(loginMember.getInstaMember(), id);
         if (deleteRsData.isFail()) {
             return rq.historyBack(deleteRsData);
         }
-        return rq.redirectWithMsg("/likeablePerson/list", deleteRsData);
+        return rq.redirectWithMsg("/likeablePerson/list", likeablePersonService.delete(deleteRsData.getData()));
     }
 
     @GetMapping("/list")

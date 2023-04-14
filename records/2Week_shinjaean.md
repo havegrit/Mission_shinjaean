@@ -243,6 +243,19 @@
 
     => RsData에 포함되는 에러 메시지에도 하드 코딩된 부분을 수정했다.
 
+-[x] LikeablePersonService class - canActorDelete() 메소드 추가
+
+    => 기존에 서비스의 delete() 메소드에서 데이터를 삭제할 수 있는지 검증하는 부분을 canActorDelete() 메소드로 따로 분리했다.
+
+    => canActorDelete() 메소드는 검증을 거쳐 삭제할 수 있다면, 성공 메시지와 likeablePerson 객체를 담은 RsData를 반환하도록 했다.
+
+    => 이에 따라 서비스의 delete() 메소드 및 컨틀롤러 단의 수정도 진행되었다.
+
+    => 우선 서비스의 delete() 메소드는 데이터를 삭제하는 기능만을 남겨놓고, 성공 메시지를 담은 RsData를 반환하도록 했다.
+
+    => 컨트롤러는 사용자의 InstaMember, 삭제하려는 LikeablePerson 객체의 id 데이터를 서비스의 canActorDelete() 메소드로 보내, 우선 삭제가 가능한지 검증을 거치도록 한 후, 문제가 없다면 서비스의 delete() 메소드로 likeablePerson 객체를 전달하여 삭제하는 과정을 진행하고, 최종적으로 성공 메시지를 출력하고 "/likeablePerson/list" 으로 리디렉션 된다.
+
+
 -[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.
 
 -[ ] UI 적용시켜 보기

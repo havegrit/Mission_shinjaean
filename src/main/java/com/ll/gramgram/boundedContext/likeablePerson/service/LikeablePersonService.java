@@ -51,12 +51,14 @@ public class LikeablePersonService {
         return RsData.of("S-1", "입력하신 인스타유저(%s)를 호감상대로 등록하였습니다.".formatted(username), likeablePerson);
     }
 
-    public List<LikeablePerson> findByFromInstaMemberId(Long fromInstaMemberId) {
-        return likeablePersonRepository.findByFromInstaMemberId(fromInstaMemberId);
+    @Transactional
+    public RsData delete(LikeablePerson likeablePerson) {
+        String cancelTargetUsername = likeablePerson.getToInstaMember().getUsername();
+        likeablePersonRepository.delete(likeablePerson);
+        return RsData.of("S-1", "%s님에 대한 데이터를 성공적으로 삭제했습니다.".formatted(cancelTargetUsername));
     }
 
-    @Transactional
-    public RsData<LikeablePerson> delete(InstaMember instaMember, Long id) {
+    public RsData<LikeablePerson> canActorDelete(InstaMember instaMember, Long id) {
         Optional<LikeablePerson> likeablePerson = likeablePersonRepository.findById(id);
         Long actorInstaMemberId = instaMember.getId();
         if (likeablePerson.isEmpty()) {
@@ -66,13 +68,7 @@ public class LikeablePersonService {
         if (!fromInstaMemberId.equals(actorInstaMemberId)) {
             return RsData.of("F-4", "데이터를 삭제할 권한이 없습니다.");
         }
-        String cancelTargetUsername = likeablePerson.get().getFromInstaMember().getUsername();
-        likeablePersonRepository.delete(likeablePerson.get());
-        return RsData.of("S-1", "%s님에 대한 데이터를 성공적으로 삭제했습니다.".formatted(cancelTargetUsername));
-    }
-
-    public Optional<LikeablePerson> findById(Long id) {
-        return likeablePersonRepository.findById(id);
+        return RsData.of("S-1", "삭제할 수 있습니다.", likeablePerson.get());
     }
 
     @Transactional
@@ -82,6 +78,14 @@ public class LikeablePersonService {
         String afterAttractionType = likeablePerson.getAttractiveTypeDisplayName();
         likeablePersonRepository.save(likeablePerson);
         return RsData.of("S-2", "%s에 대한 호감 사유를 %s에서 %s(으)로 변경합니다.".formatted(likeablePerson.getToInstaMember().getUsername(), beforeAttractionType, afterAttractionType));
+    }
+
+    public Optional<LikeablePerson> findById(Long id) {
+        return likeablePersonRepository.findById(id);
+    }
+
+    public List<LikeablePerson> findByFromInstaMemberId(Long fromInstaMemberId) {
+        return likeablePersonRepository.findByFromInstaMemberId(fromInstaMemberId);
     }
 
     public Optional<LikeablePerson> findByFromInstaMemberIdAndToInstaMember_username(Long instaMemberId, String toInstaMemberUsername) {
