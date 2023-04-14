@@ -234,7 +234,15 @@
     ❓ 한 가지 의문이 있는데, 
     "oAuth2User.getAttribute("response").getClass() = class java.util.LinkedHashMap"
     getAttribute() 메소드를 통해 가져온 response는 LinkedHashMap 타입의 데이터는 맞지만, LinkedHashMap<String, String>으로 형변환이 되어야 key 데이터로 value 데이터를 가져올 수 있다.
+    ❗ 해답
+    LinkedHashMap은 제네릭스를 사용하여, 키(key)와 값(value)의 타입이 구체적으로 명시되지 않으면 LinkedHashMap<Object, Object> 타입으로 취급된다. 그렇기 때문에 LinkedHashMap<String, String> 타입으로의 형변환이 필요로 하다.
     ````
     => id 데이터를 가져오기 위해 get(key) 메소드를 사용했다.
 
+-[x] 하드 코딩 수정
+
+    => RsData에 포함되는 에러 메시지에도 하드 코딩된 부분을 수정했다.
+
 -[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.
+
+-[ ] UI 적용시켜 보기
