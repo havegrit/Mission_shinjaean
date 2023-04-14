@@ -214,7 +214,7 @@ public class LikeablePersonControllerTests {
                 .perform(post("/likeablePerson/add")
                         .with(csrf()) // CSRF 키 생성
                         .param("username", "insta_user4")
-                        .param("attractiveTypeCode", "2")
+                        .param("attractiveTypeCode", "1")
                 )
                 .andDo(print());
 
