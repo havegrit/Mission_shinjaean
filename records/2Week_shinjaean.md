@@ -223,6 +223,7 @@
 
     => custom.'l'ikeablePerson.from.max: 10
 
+
 -[x] 네이버 로그인 시, response 데이터에서 id키 값만 추출하여 username 으로 만들기
 
     => 네이버 OAuth API를 통해 전달 받는 데이터(프로필) 중 id 데이터를 username의 일부로 사용하도록 구현
@@ -239,9 +240,11 @@
     ````
     => id 데이터를 가져오기 위해 get(key) 메소드를 사용했다.
 
+
 -[x] 하드 코딩 수정
 
     => RsData에 포함되는 에러 메시지에도 하드 코딩된 부분을 수정했다.
+
 
 -[x] LikeablePersonService class - canActorDelete() 메소드 추가
 
@@ -255,9 +258,11 @@
 
     => 컨트롤러는 사용자의 InstaMember, 삭제하려는 LikeablePerson 객체의 id 데이터를 서비스의 canActorDelete() 메소드로 보내, 우선 삭제가 가능한지 검증을 거치도록 한 후, 문제가 없다면 서비스의 delete() 메소드로 likeablePerson 객체를 전달하여 삭제하는 과정을 진행하고, 최종적으로 성공 메시지를 출력하고 "/likeablePerson/list" 으로 리디렉션 된다.
 
+
 -[x] LikeablePerson 데이터가 삭제될 때, fromInstaMember/toInstaMember 객체의 fromLikeablePeople/toLikeablePeople 데이터도 삭제
 
     => 서비스의 delete() 메소드가 실행되어 repository에서 삭제 작업을 진행하기 전에 fromInstaMember/toInstaMember 객체의 fromLikeablePeople/toLikeablePeople 데이터를 삭제하도록 구현했다.
+
 
 -[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.
 
@@ -271,3 +276,12 @@
     => 웹 브라우저에서는 정상적으로 잘 작동되는데, 테스트 코드가 문제가 있는 것 같다.
 
     => 원인은 테스트 하려는 데이터의 호감 코드가 원래 1인데, 사유를 1로 변경하는 테스트가 아니라, 2로 변경하는 테스트를 진행하고 있었고, 결과 성공적으로 사유가 변경되고 리디렉션 되었다.
+
+
+-[x] 본인을 호감 상대로 등록하려고 할 때는 폼에 작성한 인스타 아이디가 안사라지는데, 중복된 호감 표시를 할 때는 폼에 작성한 아이디가 사라진다.
+
+    => 원인 파악: 본인을 호감 상대로 등록하려고 할 때에는, add.html 에서 폼이 발송(submit)되기 전에 경고 메시지를 출력하고 종료하기 때문에 폼 양식이 유지 되었던 것. 후자의 경우는 백엔드 단에서 검증을 진행해야 하므로 폼이 발송되어야 하고, 폼이 발송되고 나면 백엔드 단에서 검증울 거치고, redirection 되거나 historyBack 되기 때문에 기존 작성 내용이 초기화 된다.
+
+    => "/likeable/add"에서 폼 발송이 발생할 때(POST), addForm의 데이터를 기억했다가, "likeable/add" GET 요청이 들어올 때, 이 데이터를 전달해줘야 한다.
+
+    => 해결: HttpSession을 사용. 폼이 발송되어 POST 요청이 발생할 때, HttpSession::setAttribute() 메소드를 사용해서 addForm의 username 데이터를 세션에 저장. GET 요청이 들어올 때, HttpSession::getAttribute() 메소드를 사용해 세션에 저장한 데이터를 가져올 수 있다.

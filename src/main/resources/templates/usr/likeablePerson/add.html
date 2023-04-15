@@ -44,7 +44,7 @@
 
                 const $checkedAttractiveTypeCodeRadioButton = $(form).find("[name=attractiveTypeCode]:checked");
 
-                if ($checkedAttractiveTypeCodeRadioButton.length == 0) {
+                if ($checkedAttractiveTypeCodeRadioButton.length === 0) {
                     toastWarning('상대방의 매력포인트를 선택해주세요.');
                     $(form).find("[name=attractiveTypeCode]:first").focus();
                     return;
@@ -61,7 +61,7 @@
             </div>
             <div>
                 <input type="text" name="username" autocomplete="off" maxlength="30" placeholder="상대방의 인스타그램 아이디"
-                       class="input input-bordered">
+                       class="input input-bordered" th:value="${formUsername}">
             </div>
             <div>
                 <div class="form-control">

@@ -7,6 +7,7 @@ import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
 import com.ll.gramgram.boundedContext.member.entity.Member;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,7 +28,11 @@ public class LikeablePersonController {
     private final LikeablePersonService likeablePersonService;
 
     @GetMapping("/add")
-    public String showAdd() {
+    public String showAdd(Model model, HttpSession session) {
+        String formUsername = (String) session.getAttribute("formUsername");
+        if ( formUsername != null) {
+            model.addAttribute("formUsername", formUsername);
+        }
         return "usr/likeablePerson/add";
     }
 
@@ -39,7 +44,8 @@ public class LikeablePersonController {
     }
 
     @PostMapping("/add")
-    public String add(@Valid AddForm addForm) {
+    public String add(@Valid AddForm addForm, HttpSession session) {
+        session.setAttribute("formUsername", addForm.getUsername());
         Member loginUser = rq.getMember();
         InstaMember userInstaMember = loginUser.getInstaMember();
         List<LikeablePerson> likeablePersonList = userInstaMember.getFromLikeablePeople();
@@ -52,6 +58,7 @@ public class LikeablePersonController {
             }
             return rq.historyBack(RsData.of("F-1", "(%s)님은 이미 호감 상대로 등록한 회원입니다.".formatted(registeringUsername)));
         }
+        session.removeAttribute("formUsername");
         if (likeablePersonList.size() >= AppConfig.getLikeablePersonFromMax()) {
             return rq.historyBack(RsData.of("F-2", "호감 상대는 %d명 까지 등록할 수 있습니다.".formatted(AppConfig.getLikeablePersonFromMax())));
         }
