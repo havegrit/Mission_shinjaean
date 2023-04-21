@@ -1,6 +1,7 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
 
+import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import com.ll.gramgram.boundedContext.member.service.MemberService;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -85,7 +87,6 @@ public class LikeablePersonControllerTests {
                 .andExpect(content().string(containsString("""
                         <input type="submit" value="추가"
                         """.stripIndent().trim())));
-        ;
     }
 
     @Test
@@ -106,7 +107,6 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("add"))
                 .andExpect(status().is3xxRedirection());
-        ;
     }
 
     @Test
@@ -127,7 +127,6 @@ public class LikeablePersonControllerTests {
                 .andExpect(handler().handlerType(LikeablePersonController.class))
                 .andExpect(handler().methodName("add"))
                 .andExpect(status().is3xxRedirection());
-        ;
     }
 
     @Test
@@ -156,10 +155,10 @@ public class LikeablePersonControllerTests {
                 .andExpect(content().string(containsString("""
                         <span class="toInstaMember_attractiveTypeDisplayName">성격</span>
                         """.stripIndent().trim())));
-        ;
     }
+
     @Test
-    @DisplayName("호감삭제")
+    @DisplayName("호감취소")
     @WithUserDetails("user3")
     void t006() throws Exception {
         // WHEN
@@ -170,13 +169,14 @@ public class LikeablePersonControllerTests {
         // THEN
         resultActions
                 .andExpect(handler().handlerType(LikeablePersonController.class))
-                .andExpect(handler().methodName("delete"))
+                .andExpect(handler().methodName("cancel"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/likeablePerson/list**"))
         ;
     }
+
     @Test
-    @DisplayName("호감삭제(존재하지 않는 데이터 삭제. 결과: 실패)")
+    @DisplayName("호감취소(존재하지 않는 데이터에 대한 취소. 결과: 실패)")
     @WithUserDetails("user3")
     void t007() throws Exception {
         //WHEN
@@ -186,12 +186,13 @@ public class LikeablePersonControllerTests {
         //THEN
         resultActions
                 .andExpect(handler().handlerType(LikeablePersonController.class))
-                .andExpect(handler().methodName("delete"))
+                .andExpect(handler().methodName("cancel"))
                 .andExpect(status().is4xxClientError());
 
     }
+
     @Test
-    @DisplayName("호감삭제(권한이 없는 데이터 삭제. 결과: 실패")
+    @DisplayName("호감취소(권한이 없는 데이터에 대한 취소. 결과: 실패")
     @WithUserDetails("user2")
     void t008() throws Exception {
         //WHEN
@@ -201,10 +202,11 @@ public class LikeablePersonControllerTests {
         //THEN
         resultActions
                 .andExpect(handler().handlerType(LikeablePersonController.class))
-                .andExpect(handler().methodName("delete"))
+                .andExpect(handler().methodName("cancel"))
                 .andExpect(status().is4xxClientError());
         assertThat(likeablePersonService.findById(1L).isPresent()).isTrue();
     }
+
     @Test
     @DisplayName("호감표시(중복, 결과: 실패)")
     @WithUserDetails("user3")
@@ -225,23 +227,25 @@ public class LikeablePersonControllerTests {
                 .andExpect(status().is4xxClientError());
         assertThat(likeablePersonService.findByFromInstaMemberId(2L).size()).isEqualTo(2);
     }
+
     @Test
     @DisplayName("호감 표시(11명 이상, 결과: 실패)")
-    @WithUserDetails("user3")
+    @WithUserDetails("user5")
     void t010() throws Exception {
-        Optional<Member> member = memberService.findByUsername("user3");
-        //더미 데이터 8개(insta_user5 ~ insta_user12) 생성.
-        for (int i = 5; i < 13; i++) {
-            likeablePersonService.like(member.get(), "insta_user%d".formatted(i), 1);
-        }
+        Optional<Member> member = memberService.findByUsername("user5");
+        //더미 데이터 10개(insta_user0 ~ insta_user9) 생성.
+        IntStream.range(0, (int) AppConfig.getLikeablePersonFromMax())
+                .forEach(index -> {
+                    likeablePersonService.like(member.get(), "insta_user%30d".formatted(index), 1);
+                });
         //기존 데이터 2개와 합하여 총 10개의 데이터가 존재하게 된다.
-        assertThat(likeablePersonService.findByFromInstaMemberId(2L).size()).isEqualTo(10);
+        assertThat(likeablePersonService.findByFromInstaMemberId(4L).size()).isEqualTo(10L);
 
         // WHEN
         ResultActions resultActions = mvc
-                .perform(post("/likeablePerson/add")
+                .perform(post("/likeablePerson/like")
                         .with(csrf()) // CSRF 키 생성
-                        .param("username", "insta_user13")
+                        .param("username", "insta_user010")
                         .param("attractiveTypeCode", "2")
                 )
                 .andDo(print());
@@ -249,9 +253,9 @@ public class LikeablePersonControllerTests {
         // THEN
         resultActions
                 .andExpect(handler().handlerType(LikeablePersonController.class))
-                .andExpect(handler().methodName("add"))
+                .andExpect(handler().methodName("like"))
                 .andExpect(status().is4xxClientError());
         //데이터가 10개에서 증가되지 않았는지 체크
-        assertThat(likeablePersonService.findByFromInstaMemberId(2L).size()).isEqualTo(10);
+        assertThat(likeablePersonService.findByFromInstaMemberId(4L).size()).isEqualTo(10L);
     }
 }

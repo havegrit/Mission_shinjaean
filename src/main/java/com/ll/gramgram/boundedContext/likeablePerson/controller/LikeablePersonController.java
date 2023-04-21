@@ -27,24 +27,24 @@ public class LikeablePersonController {
     private final Rq rq;
     private final LikeablePersonService likeablePersonService;
 
-    @GetMapping("/add")
-    public String showAdd(Model model, HttpSession session) {
+    @GetMapping("/like")
+    public String showLike(Model model, HttpSession session) {
         String formUsername = (String) session.getAttribute("formUsername");
-        if ( formUsername != null) {
+        if (formUsername != null) {
             model.addAttribute("formUsername", formUsername);
         }
-        return "usr/likeablePerson/add";
+        return "usr/likeablePerson/like";
     }
 
     @AllArgsConstructor
     @Getter
-    public static class AddForm {
+    public static class LikeForm {
         private final String username;
         private final int attractiveTypeCode;
     }
 
-    @PostMapping("/add")
-    public String add(@Valid AddForm addForm, HttpSession session) {
+    @PostMapping("/like")
+    public String like(@Valid LikeForm addForm, HttpSession session) {
         session.setAttribute("formUsername", addForm.getUsername());
         Member loginUser = rq.getMember();
         InstaMember userInstaMember = loginUser.getInstaMember();
@@ -73,16 +73,16 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
+    public String cancel(@PathVariable Long id) {
         Member loginMember = rq.getMember();
         if (loginMember.getInstaMember() == null) {
-            return rq.historyBack(RsData.of("F-1","잘못된 접근입니다."));
+            return rq.historyBack(RsData.of("F-1", "잘못된 접근입니다."));
         }
-        RsData<LikeablePerson> deleteRsData = likeablePersonService.canActorDelete(loginMember.getInstaMember(), id);
-        if (deleteRsData.isFail()) {
-            return rq.historyBack(deleteRsData);
+        RsData<LikeablePerson> cancelRsData = likeablePersonService.canActorCancel(loginMember.getInstaMember(), id);
+        if (cancelRsData.isFail()) {
+            return rq.historyBack(cancelRsData);
         }
-        return rq.redirectWithMsg("/likeablePerson/list", likeablePersonService.delete(deleteRsData.getData()));
+        return rq.redirectWithMsg("/likeablePerson/list", likeablePersonService.cancel(cancelRsData.getData()));
     }
 
     @GetMapping("/list")

@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LikeablePersonServiceTests {
     @Autowired
     private LikeablePersonService likeablePersonService;
+
     @Test
     @DisplayName("modifyAttractionTypeCode() Test")
     void t001() {

@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +51,7 @@ public class LikeablePersonService {
     }
 
     @Transactional
-    public RsData delete(LikeablePerson likeablePerson) {
+    public RsData cancel(LikeablePerson likeablePerson) {
         String cancelTargetUsername = likeablePerson.getToInstaMember().getUsername();
         likeablePerson.getFromInstaMember().removeFromLikeablePerson(likeablePerson);
         likeablePerson.getToInstaMember().removeToLikeablePerson(likeablePerson);
@@ -60,7 +59,7 @@ public class LikeablePersonService {
         return RsData.of("S-1", "%s님에 대한 데이터를 성공적으로 삭제했습니다.".formatted(cancelTargetUsername));
     }
 
-    public RsData<LikeablePerson> canActorDelete(InstaMember instaMember, Long id) {
+    public RsData<LikeablePerson> canActorCancel(InstaMember instaMember, Long id) {
         Optional<LikeablePerson> likeablePerson = likeablePersonRepository.findById(id);
         Long actorInstaMemberId = instaMember.getId();
         if (likeablePerson.isEmpty()) {
@@ -74,7 +73,7 @@ public class LikeablePersonService {
     }
 
     @Transactional
-    public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractionTypeCode){
+    public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractionTypeCode) {
         String beforeAttractionType = likeablePerson.getAttractiveTypeDisplayName();
         likeablePerson.setAttractiveTypeCode(attractionTypeCode);
         String afterAttractionType = likeablePerson.getAttractiveTypeDisplayName();
