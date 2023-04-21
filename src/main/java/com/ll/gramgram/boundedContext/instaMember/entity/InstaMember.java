@@ -34,7 +34,7 @@ public class InstaMember {
     private String username;
     @Setter
     private String gender;
-    @OneToMany(mappedBy = "fromInstaMe가mber", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fromInstaMember", cascade = CascadeType.ALL)
     @OrderBy("id desc")
     @LazyCollection(LazyCollectionOption.EXTRA)
     @Builder.Default
