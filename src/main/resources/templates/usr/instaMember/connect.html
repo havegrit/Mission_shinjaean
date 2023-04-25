@@ -43,13 +43,18 @@
                 <i class="fa-brands fa-instagram"></i>
                 인스타아이디 인증
             </h1>
-            <form class="flex flex-col gap-6" onsubmit="ConnectForm__submit(this); return false;">
+            <form class="flex flex-col gap-6" th:action method="post"
+                  onsubmit="ConnectForm__submit(this); return false;">
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text">인스타아이디</span>
                     </label>
-                    <input autocomplete="off" type="text" name="username" placeholder="아이디" class="input input-bordered" onchange="$(this).keyup();" onkeyup="$(this).next().children(':last-child').text(this.value.replaceAll(' ', ''));" onpaste="setTimeoutZero(() => $(this).keyup());">
-                    <a href="#" class="block mt-3 text-sm break-all underline text-blue-300" onclick="$(this).attr('href', $(this).text().trim());" target="_blank">
+                    <input autocomplete="off" type="text" name="username" placeholder="아이디" class="input input-bordered"
+                           onchange="$(this).keyup();"
+                           onkeyup="$(this).next().children(':last-child').text(this.value.replaceAll(' ', ''));"
+                           onpaste="setTimeoutZero(() => $(this).keyup());">
+                    <a href="#" class="block mt-3 text-sm break-all underline text-blue-300"
+                       onclick="$(this).attr('href', $(this).text().trim());" target="_blank">
                         <span>https://instagram.com/</span><span class="text-red-300"></span>
                     </a>
                     <script>
