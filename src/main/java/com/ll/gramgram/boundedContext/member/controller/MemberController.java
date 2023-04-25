@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/member") // 액션 URL의 공통 접두어
+@RequestMapping("/usr/member") // 액션 URL의 공통 접두어
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
