@@ -30,9 +30,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String oauthId;
-        System.out.println("oAuth2User = " + oAuth2User);
-        System.out.println("oAuth2User.getClass() = " + oAuth2User.getClass());
-        System.out.println("oAuth2User.getAttribute(\"response\").getClass() = " + oAuth2User.getAttribute("response").getClass());
         String providerTypeCode = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
         if (providerTypeCode.equals("NAVER")) {
             LinkedHashMap<String, String> oAuthResp = oAuth2User.getAttribute("response");
