@@ -283,6 +283,10 @@
 
 -[ ] UI 적용시켜 보기
 
+-[x] 호감 표시 등록 후 3시간이 지나야 수정/삭제가 가능하도록 구현
+
+    => Duration::between 메소드를 통해서 현재 시간과 수정하려는 데이터의 modifyDate 간의 차이를 구한 뒤, 그 차이가 3시간 미만이라면 에러 메시지를 출력하도록 구현했다.
+
 **[트러블슈팅]**
 
 -[x] LikeablePersonControllerTests 에러 발생
@@ -303,3 +307,7 @@
 
  => 해결: HttpSession을 사용. 폼이 발송되어 POST 요청이 발생할 때, HttpSession::setAttribute() 메소드를 사용해서 addForm의 username 데이터를 세션에 저장.
  GET 요청이 들어올 때, HttpSession::getAttribute() 메소드를 사용해 세션에 저장한 데이터를 가져올 수 있다.
+ 
+-[ ] 로그인 한 상태에서 개발을 진행한 후, 페이지가 새로고침되면 세션을 삭제해야만 웹페이지가 정상 작동한다.
+
+-[ ] 로그아웃 시, 등록했던 본인의 인스타 정보가 삭제된다.

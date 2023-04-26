@@ -7,9 +7,13 @@ import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +26,7 @@ public class LikeablePersonService {
 
     @Transactional
     public RsData<LikeablePerson> like(Member member, String username, int attractiveTypeCode) {
+
         if (!member.hasConnectedInstaMember()) {
             return RsData.of("F-2", "먼저 본인의 인스타그램 아이디를 입력해야 합니다.");
         }
@@ -79,6 +84,14 @@ public class LikeablePersonService {
         String afterAttractionType = likeablePerson.getAttractiveTypeDisplayName();
         likeablePersonRepository.save(likeablePerson);
         return RsData.of("S-2", "%s에 대한 호감 사유를 %s에서 %s(으)로 변경합니다.".formatted(likeablePerson.getToInstaMember().getUsername(), beforeAttractionType, afterAttractionType));
+    }
+
+    public RsData<LikeablePerson> canExecutable(LikeablePerson likeablePerson) {
+        long diff = Duration.between(LocalDateTime.now(), likeablePerson.getModifyDate()).getSeconds();
+        if (diff < 3 * 60 * 60) {
+            return RsData.of("F-1", "호감 사유를 변경할 수 없습니다.", likeablePerson);
+        }
+        return RsData.of("S-1", "호감 사유를 변경할 수 있습니다.", likeablePerson);
     }
 
     public Optional<LikeablePerson> findById(Long id) {

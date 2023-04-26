@@ -52,9 +52,13 @@ public class LikeablePersonController {
         String registeringUsername = addForm.getUsername().trim();
         Optional<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberIdAndToInstaMember_username(userInstaMember.getId(), registeringUsername);
         if (likeablePerson.isPresent()) {
+            RsData executableRsData = likeablePersonService.canExecutable(likeablePerson.get());
+            if (executableRsData.isFail()) {
+                return rq.historyBack(executableRsData);
+            }
             if (likeablePerson.get().getAttractiveTypeCode() != addForm.getAttractiveTypeCode()) {
                 RsData editRsData = likeablePersonService.modifyAttractionTypeCode(likeablePerson.get(), addForm.getAttractiveTypeCode());
-                return rq.redirectWithMsg("/likeablePerson/list", editRsData);
+                return rq.redirectWithMsg("/usr/likeablePerson/list", editRsData);
             }
             return rq.historyBack(RsData.of("F-1", "(%s)님은 이미 호감 상대로 등록한 회원입니다.".formatted(registeringUsername)));
         }
@@ -68,7 +72,7 @@ public class LikeablePersonController {
             return rq.historyBack(createRsData);
         }
 
-        return rq.redirectWithMsg("/likeablePerson/list", createRsData);
+        return rq.redirectWithMsg("/usr/likeablePerson/list", createRsData);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -82,7 +86,11 @@ public class LikeablePersonController {
         if (cancelRsData.isFail()) {
             return rq.historyBack(cancelRsData);
         }
-        return rq.redirectWithMsg("/likeablePerson/list", likeablePersonService.cancel(cancelRsData.getData()));
+        RsData executableRsData = likeablePersonService.canExecutable(cancelRsData.getData());
+        if (executableRsData.isFail()) {
+            return rq.historyBack(executableRsData);
+        }
+        return rq.redirectWithMsg("/usr/likeablePerson/list", likeablePersonService.cancel(cancelRsData.getData()));
     }
 
     @GetMapping("/list")
