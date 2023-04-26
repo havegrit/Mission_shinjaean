@@ -7,13 +7,11 @@ import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.repository.LikeablePersonRepository;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
