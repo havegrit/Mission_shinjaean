@@ -281,11 +281,17 @@
 
 -[ ] 이미 등록한 호감 상대의 호감 사유를 변경할 때, 확인하는 작업을 진행하면 좋을 것 같다.
 
--[ ] UI 적용시켜 보기
+-[x] UI 적용시켜 보기
 
 -[x] 호감 표시 등록 후 3시간이 지나야 수정/삭제가 가능하도록 구현
 
     => Duration::between 메소드를 통해서 현재 시간과 수정하려는 데이터의 modifyDate 간의 차이를 구한 뒤, 그 차이가 3시간 미만이라면 에러 메시지를 출력하도록 구현했다.
+
+-[x] InstaMemberSnapshot 도입
+
+-[x] EventListener 도입
+
+    => EventAfterLike, EventAfterFromInstaMemberChangeGender, EventAfterModifyAttractiveType, EventBeforeCancelLike 생성
 
 **[트러블슈팅]**
 
