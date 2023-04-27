@@ -1,6 +1,8 @@
 package com.ll.gramgram.boundedContext.likeablePerson.service;
 
 import com.ll.gramgram.base.event.EventAfterLike;
+import com.ll.gramgram.base.event.EventAfterModifyAttractiveType;
+import com.ll.gramgram.base.event.EventBeforeCancelLike;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.instaMember.service.InstaMemberService;
@@ -60,6 +62,8 @@ public class LikeablePersonService {
 
     @Transactional
     public RsData cancel(LikeablePerson likeablePerson) {
+        publisher.publishEvent(new EventBeforeCancelLike(this, likeablePerson));
+
         String cancelTargetUsername = likeablePerson.getToInstaMember().getUsername();
         likeablePerson.getFromInstaMember().removeFromLikeablePerson(likeablePerson);
         likeablePerson.getToInstaMember().removeToLikeablePerson(likeablePerson);
@@ -81,12 +85,14 @@ public class LikeablePersonService {
     }
 
     @Transactional
-    public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int attractionTypeCode) {
-        String beforeAttractionType = likeablePerson.getAttractiveTypeDisplayName();
-        likeablePerson.setAttractiveTypeCode(attractionTypeCode);
-        String afterAttractionType = likeablePerson.getAttractiveTypeDisplayName();
+    public RsData<LikeablePerson> modifyAttractionTypeCode(LikeablePerson likeablePerson, int newAttractionTypeCode) {
+        int oldAttractionTypeCode = likeablePerson.getAttractiveTypeCode();
+        String oldAttractionType = likeablePerson.getAttractiveTypeDisplayName();
+        likeablePerson.setAttractiveTypeCode(newAttractionTypeCode);
+        String newAttractionType = likeablePerson.getAttractiveTypeDisplayName();
         likeablePersonRepository.save(likeablePerson);
-        return RsData.of("S-2", "%s에 대한 호감 사유를 %s에서 %s(으)로 변경합니다.".formatted(likeablePerson.getToInstaMember().getUsername(), beforeAttractionType, afterAttractionType));
+        publisher.publishEvent(new EventAfterModifyAttractiveType(this, likeablePerson, oldAttractionTypeCode, newAttractionTypeCode));
+        return RsData.of("S-2", "%s에 대한 호감 사유를 %s에서 %s(으)로 변경합니다.".formatted(likeablePerson.getToInstaMember().getUsername(), oldAttractionType, newAttractionType));
     }
 
     public RsData<LikeablePerson> canExecutable(LikeablePerson likeablePerson) {
