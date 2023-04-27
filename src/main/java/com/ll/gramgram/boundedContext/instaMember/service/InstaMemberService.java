@@ -3,9 +3,11 @@ package com.ll.gramgram.boundedContext.instaMember.service;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.instaMember.repository.InstaMemberRepository;
+import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.member.entity.Member;
 import com.ll.gramgram.boundedContext.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class InstaMemberService {
     private final InstaMemberRepository instaMemberRepository;
     private final MemberService memberService;
+    private final InstaMemberSnapshotRepository instaMemberSnapshotRepository;
 
     public Optional<InstaMember> findByUsername(String username) {
         return instaMemberRepository.findByUsername(username);
@@ -81,5 +84,22 @@ public class InstaMemberService {
 
         // 생성
         return create(username, gender);
+    }
+
+    public void whenAfterLike(LikeablePerson likeablePerson) {
+        InstaMember fromInstaMember = likeablePerson.getFromInstaMember();
+        InstaMember toInstaMember = likeablePerson.getToInstaMember();
+
+        toInstaMember.increaseLikesCount(fromInstaMember.getGender(), likeablePerson.getAttractiveTypeCode());
+
+        InstaMemberSnapshot snapshot = toInstaMember.snapshot("Like");
+
+        saveSnapshot(snapshot);
+
+        // 알림
+    }
+
+    private void saveSnapshot(InstaMemberSnapshot snapshot) {
+        instaMemberSnapshotRepository.save(snapshot);
     }
 }
