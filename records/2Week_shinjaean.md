@@ -295,6 +295,10 @@
 
 -[x] 호감 목록이 비어있을 때, "목록이 비어있습니다. 당신의 호감을 표시해주세요." 라는 문구 표시
 
+-[x] LikeablePerson - getAttractiveTypeDisplayNameWithIcon 메소드 추가
+
+-[x] 호감 목록 UI 개선
+
 **[트러블슈팅]**
 
 -[x] LikeablePersonControllerTests 에러 발생
