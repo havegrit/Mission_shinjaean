@@ -299,6 +299,8 @@
 
 -[x] 호감 목록 UI 개선
 
+-[x] 호감 사유 변경 폼 도입
+
 **[트러블슈팅]**
 
 -[x] LikeablePersonControllerTests 에러 발생

@@ -1,7 +1,6 @@
 package com.ll.gramgram.base.event;
 
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
-import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

@@ -1,14 +1,12 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
-import com.ll.gramgram.base.appConfig.AppConfig;
 import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
 import com.ll.gramgram.boundedContext.likeablePerson.entity.LikeablePerson;
 import com.ll.gramgram.boundedContext.likeablePerson.service.LikeablePersonService;
-import com.ll.gramgram.boundedContext.member.entity.Member;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/usr/likeablePerson")
@@ -27,82 +24,107 @@ public class LikeablePersonController {
     private final Rq rq;
     private final LikeablePersonService likeablePersonService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/like")
-    public String showLike(Model model, HttpSession session) {
-        String formUsername = (String) session.getAttribute("formUsername");
-        if (formUsername != null) {
-            model.addAttribute("formUsername", formUsername);
-        }
+    public String showLike() {
         return "usr/likeablePerson/like";
     }
 
     @AllArgsConstructor
     @Getter
     public static class LikeForm {
+        @NotBlank
+        @Size(min = 3, max = 30)
         private final String username;
+        @NotNull
+        @Min(1)
+        @Max(3)
         private final int attractiveTypeCode;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/like")
-    public String like(@Valid LikeForm addForm, HttpSession session) {
-        session.setAttribute("formUsername", addForm.getUsername());
-        Member loginUser = rq.getMember();
-        InstaMember userInstaMember = loginUser.getInstaMember();
-        List<LikeablePerson> likeablePersonList = userInstaMember.getFromLikeablePeople();
-        String registeringUsername = addForm.getUsername().trim();
-        Optional<LikeablePerson> likeablePerson = likeablePersonService.findByFromInstaMemberIdAndToInstaMember_username(userInstaMember.getId(), registeringUsername);
-        if (likeablePerson.isPresent()) {
-            RsData executableRsData = likeablePersonService.canExecutable(likeablePerson.get());
-            if (executableRsData.isFail()) {
-                return rq.historyBack(executableRsData);
-            }
-            if (likeablePerson.get().getAttractiveTypeCode() != addForm.getAttractiveTypeCode()) {
-                RsData editRsData = likeablePersonService.modifyAttractionTypeCode(likeablePerson.get(), addForm.getAttractiveTypeCode());
-                return rq.redirectWithMsg("/usr/likeablePerson/list", editRsData);
-            }
-            return rq.historyBack(RsData.of("F-1", "(%s)님은 이미 호감 상대로 등록한 회원입니다.".formatted(registeringUsername)));
-        }
-        session.removeAttribute("formUsername");
-        if (likeablePersonList.size() >= AppConfig.getLikeablePersonFromMax()) {
-            return rq.historyBack(RsData.of("F-2", "호감 상대는 %d명 까지 등록할 수 있습니다.".formatted(AppConfig.getLikeablePersonFromMax())));
-        }
-        RsData createRsData = likeablePersonService.like(rq.getMember(), registeringUsername, addForm.getAttractiveTypeCode());
+    public String like(@Valid LikeForm likeForm) {
+        RsData<LikeablePerson> rsData = likeablePersonService.like(rq.getMember(), likeForm.getUsername(), likeForm.getAttractiveTypeCode());
 
-        if (createRsData.isFail()) {
-            return rq.historyBack(createRsData);
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData);
         }
 
-        return rq.redirectWithMsg("/usr/likeablePerson/list", createRsData);
+        return rq.redirectWithMsg("/usr/likeablePerson/list", rsData);
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{id}")
-    public String cancel(@PathVariable Long id) {
-        Member loginMember = rq.getMember();
-        if (loginMember.getInstaMember() == null) {
-            return rq.historyBack(RsData.of("F-1", "잘못된 접근입니다."));
-        }
-        RsData<LikeablePerson> cancelRsData = likeablePersonService.canActorCancel(loginMember.getInstaMember(), id);
-        if (cancelRsData.isFail()) {
-            return rq.historyBack(cancelRsData);
-        }
-        RsData executableRsData = likeablePersonService.canExecutable(cancelRsData.getData());
-        if (executableRsData.isFail()) {
-            return rq.historyBack(executableRsData);
-        }
-        return rq.redirectWithMsg("/usr/likeablePerson/list", likeablePersonService.cancel(cancelRsData.getData()));
-    }
-
     @GetMapping("/list")
     public String showList(Model model) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
         // 인스타인증을 했는지 체크
         if (instaMember != null) {
+            // 해당 인스타회원이 좋아하는 사람들 목록
             List<LikeablePerson> likeablePeople = instaMember.getFromLikeablePeople();
             model.addAttribute("likeablePeople", likeablePeople);
         }
 
         return "usr/likeablePerson/list";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{id}")
+    public String cancel(@PathVariable Long id) {
+        LikeablePerson likeablePerson = likeablePersonService.findById(id).orElse(null);
+
+        RsData canDeleteRsData = likeablePersonService.canCancel(rq.getMember(), likeablePerson);
+
+        if (canDeleteRsData.isFail()) return rq.historyBack(canDeleteRsData);
+
+        RsData deleteRsData = likeablePersonService.cancel(likeablePerson);
+
+        if (deleteRsData.isFail()) return rq.historyBack(deleteRsData);
+
+        return rq.redirectWithMsg("/usr/likeablePerson/list", deleteRsData);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modify/{id}")
+    public String showModify(@PathVariable Long id, Model model) {
+        LikeablePerson likeablePerson = likeablePersonService.findById(id).orElseThrow();
+
+        RsData canModifyRsData = likeablePersonService.canModifyLike(rq.getMember(), likeablePerson);
+
+        if (canModifyRsData.isFail()) return rq.historyBack(canModifyRsData);
+
+        model.addAttribute("likeablePerson", likeablePerson);
+
+        return "usr/likeablePerson/modify";
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class ModifyForm {
+        @NotNull
+        @Min(1)
+        @Max(3)
+        private final int attractiveTypeCode;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{id}")
+    public String modify(@PathVariable Long id, @Valid ModifyForm modifyForm) {
+        RsData<LikeablePerson> rsData = likeablePersonService.modifyAttractive(rq.getMember(), id, modifyForm.getAttractiveTypeCode());
+
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData);
+        }
+
+        return rq.redirectWithMsg("/usr/likeablePerson/list", rsData);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/toList")
+    @ResponseBody
+    public String showToList(Model model) {
+        //TODO : showToList 구현해야 함
+        return "usr/likeablePerson/toList 구현해야 함";
     }
 }

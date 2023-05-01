@@ -1,7 +1,5 @@
-package com.ll.gramgram.boundedContext.instaMember.service;
+package com.ll.gramgram.boundedContext.instaMember.entity;
 
-import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
-import com.ll.gramgram.boundedContext.instaMember.entity.InstaMemberBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;

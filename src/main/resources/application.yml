@@ -60,5 +60,6 @@ logging:
     org.springframework.security: trace
 custom:
   likeablePerson:
+    modifyCoolTime: '#{60 * 60 * 3}'
     from:
       max: 10

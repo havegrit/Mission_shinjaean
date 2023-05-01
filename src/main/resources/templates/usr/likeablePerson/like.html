@@ -1,12 +1,12 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 
 <head>
-    <title>당신이 좋아하는 사람이 누군지 알려주세요.</title>
+    <title>호감표시</title>
 </head>
 
 <body>
 
-<mai layout:fragment="main">
+<main layout:fragment="main" class="flex-grow flex items-center justify-center">
     <div th:unless="${@rq.member.hasConnectedInstaMember}" th:include="usr/part/needToConnect::base"></div>
 
     <th:block th:if="${@rq.member.hasConnectedInstaMember}">
@@ -24,8 +24,8 @@
                     return;
                 }
 
-                if (form.username.value.length < 4) {
-                    toastWarning('상대방의 인스타그램 아이디를 4자 이상 입력해주세요.');
+                if (form.username.value.length < 3) {
+                    toastWarning('상대방의 인스타그램 아이디를 3자 이상 입력해주세요.');
                     form.username.focus();
                     return;
                 }
@@ -57,14 +57,20 @@
             <form class="flex flex-col gap-6" method="POST" th:action onsubmit="LikeForm__submit(this); return false;">
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">당신의 인스타 아이디</span>
+                        <span class="label-text">
+                            <i class="fa-brands fa-instagram"></i>
+                            당신의 인스타 아이디
+                        </span>
                     </label>
                     <div class="badge badge-primary" th:text="${@rq.member.instaMember.username}"></div>
                 </div>
 
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">상대방 인스타 아이디</span>
+                        <span class="label-text">
+                            <i class="fa-brands fa-instagram"></i>
+                            상대방 인스타 아이디
+                        </span>
                     </label>
                     <input type="text" name="username" placeholder="인스타 아이디" class="input input-bordered" autofocus
                            onchange="$(this).keyup();"
@@ -75,14 +81,23 @@
                         <span>https://instagram.com/</span><span class="text-red-300"></span>
                     </a>
                     <script>
+                        // input : 태그가 input 인 녀석 선택
+                        // input[name="username"] 태그가 input 이고 name 속성의 값이 username 인 녀석을 선택
+                        // input[name="username"]:last : 태그가 input 이고 name 속성의 값이 username 인 녀석들 중에서 꼴등 한명 선택
+                        // .keyup(); : 강제로 keyup 이벤트 트리거(이벤트를 강제로 발동시킨다.)
                         $(`input[name="username"]:last`).keyup();
                     </script>
                 </div>
 
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">매력포인트</span>
+                        <span class="label-text">
+                            <i class="fa-solid fa-check"></i>
+                            호감사유
+                        </span>
                     </label>
+
+                    <!-- 라벨을 클릭하면 라벨의 하위요소인 버튼(체크,라디오,일반 등)이 클릭되는 효과) -->
                     <div class="flex justify-center gap-4">
                         <label class="flex gap-2 items-center cursor-pointer">
                             <input type="radio" name="attractiveTypeCode" value="1" class="radio peer">
@@ -116,10 +131,24 @@
                     <span>호감표시</span>
                 </button>
             </form>
-        </div>
 
+            <div class="text-center mt-4">
+                <a th:if="${@rq.member.hasConnectedInstaMember}" href="list" class="btn btn-link">
+                    <span>
+                        <i class="fa-solid fa-list-ol mr-1"></i>
+                        호감목록&nbsp;
+                    </span>
+                </a>
+                <a th:if="${@rq.member.hasConnectedInstaMember}" href="/usr/member/me" class="btn btn-link">
+                    <span>
+                        <i class="fa-solid fa-user mr-1"></i>
+                        내 정보&nbsp;
+                    </span>
+                </a>
+            </div>
+        </div>
     </th:block>
-</mai>
+</main>
 </body>
 
 </html>
