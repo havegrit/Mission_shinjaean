@@ -55,15 +55,9 @@ public class LikeablePersonService {
 
         likeablePersonRepository.save(likeablePerson); // 저장
 
-        // 너가 좋아하는 호감표시 생겼어.
-        fromInstaMember.addFromLikeablePerson(likeablePerson);
-
-        // 너를 좋아하는 호감표시 생겼어.
-        toInstaMember.addToLikeablePerson(likeablePerson);
-
         Notification notification = Notification
                 .builder()
-                .readDate(LocalDateTime.now())
+                .readDate(null)
                 .toInstaMember(toInstaMember)
                 .fromInstaMember(fromInstaMember)
                 .typeCode("Like")
@@ -74,6 +68,14 @@ public class LikeablePersonService {
                 .build();
 
         notificationRepository.save(notification);
+
+        // 너가 좋아하는 호감표시 생겼어.
+        fromInstaMember.addFromLikeablePerson(likeablePerson);
+        fromInstaMember.addSentNotification(notification);
+
+        // 너를 좋아하는 호감표시 생겼어.
+        toInstaMember.addToLikeablePerson(likeablePerson);
+        toInstaMember.addReceivedNotification(notification);
 
         publisher.publishEvent(new EventAfterLike(this, likeablePerson));
 

@@ -38,6 +38,14 @@
 
 -[x] 호감 표시 할 때, notification 객체를 생성
 
+-[x] Entity `InstaMember`에 OneToMany 관계 주입. `receivedNotifications` = 호감 표시를 받거나, 받은 호감 표시의 사유가 변경 되었을 때, 받는 알림들을 저장. `sentNotifications` = 호감을 표시하거나, 이미 표시했던 호감 표시의 사유를 변경할 때 발생시킨 알림들을 저장
+
+-[x] `Notification` 객체가 생성될 때, `InstaMember` 객체에 저장할 수 있도록 add 메소드를 생성
+
+-[x] 호감 표시 할 때, 생성된 `Notification` 객체를 `InstaMember` 객체에 저장. 알림을 발생 시킨 주체에는 `sentNotifications`에 추가하고, 알림을 받는 주체는 `receivedNotifications`에 추가한다.
+
+-[ ] 호감 사유 변경 할 때, notification 객체 생성하고, `InstaMember` 객체에 저장
+
 **[특이사항]**
 
 - 재사용 대기 시간 구현
