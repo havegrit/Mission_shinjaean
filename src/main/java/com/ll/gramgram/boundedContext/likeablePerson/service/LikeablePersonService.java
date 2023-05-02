@@ -205,6 +205,8 @@ public class LikeablePersonService {
                 .newAttractiveTypeCode(attractiveTypeCode)
                 .build();
 
+        notificationRepository.save(notification);
+
         toInstaMember.addReceivedNotification(notification);
         fromInstaMember.addSentNotification(notification);
 
