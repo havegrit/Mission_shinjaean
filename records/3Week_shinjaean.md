@@ -46,6 +46,8 @@
 
 -[x] 호감 사유 변경 할 때, notification 객체 생성하고, `InstaMember` 객체에 저장
 
+-[x] 내가 받은 알림 목록을 DB에서 정상적으로 받아오려면, InstaMember 객체를 통해 찾는 것이 아닌, InstaMember 객체의 id 컬럼 값으로 찾아야 한다. Notification 테이블에는 id 값만 저장하기 때문
+
 **[특이사항]**
 
 - 재사용 대기 시간 구현
