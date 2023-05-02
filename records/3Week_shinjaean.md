@@ -44,7 +44,7 @@
 
 -[x] 호감 표시 할 때, 생성된 `Notification` 객체를 `InstaMember` 객체에 저장. 알림을 발생 시킨 주체에는 `sentNotifications`에 추가하고, 알림을 받는 주체는 `receivedNotifications`에 추가한다.
 
--[ ] 호감 사유 변경 할 때, notification 객체 생성하고, `InstaMember` 객체에 저장
+-[x] 호감 사유 변경 할 때, notification 객체 생성하고, `InstaMember` 객체에 저장
 
 **[특이사항]**
 

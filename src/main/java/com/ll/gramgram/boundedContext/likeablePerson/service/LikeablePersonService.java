@@ -183,11 +183,30 @@ public class LikeablePersonService {
         }
 
         String oldAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
+        int oldAttractiveTypeCode = likeablePerson.getAttractiveTypeCode();
         String username = likeablePerson.getToInstaMember().getUsername();
 
         modifyAttractionTypeCode(likeablePerson, attractiveTypeCode);
 
         String newAttractiveTypeDisplayName = likeablePerson.getAttractiveTypeDisplayName();
+
+        InstaMember toInstaMember = likeablePerson.getToInstaMember();
+        InstaMember fromInstaMember = likeablePerson.getFromInstaMember();
+
+        Notification notification = Notification
+                .builder()
+                .readDate(null)
+                .toInstaMember(toInstaMember)
+                .fromInstaMember(fromInstaMember)
+                .typeCode("ModifyAttractiveType")
+                .oldGender(null)
+                .oldAttractiveTypeCode(oldAttractiveTypeCode)
+                .newGender(null)
+                .newAttractiveTypeCode(attractiveTypeCode)
+                .build();
+
+        toInstaMember.addReceivedNotification(notification);
+        fromInstaMember.addSentNotification(notification);
 
         return RsData.of("S-3", "%s님에 대한 호감사유를 %s에서 %s(으)로 변경합니다.".formatted(username, oldAttractiveTypeDisplayName, newAttractiveTypeDisplayName), likeablePerson);
     }
