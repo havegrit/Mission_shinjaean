@@ -15,6 +15,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -95,6 +97,10 @@ public class LikeablePersonService {
         if (actorInstaMemberId != fromInstaMemberId)
             return RsData.of("F-2", "권한이 없습니다.");
 
+        if (!likeablePerson.isModifyUnlocked()) {
+            return RsData.of("F-6", "호감 표시를 삭제할 수 없습니다.");
+        }
+
         return RsData.of("S-1", "삭제가능합니다.");
     }
 
@@ -124,10 +130,6 @@ public class LikeablePersonService {
         }
 
         long likeablePersonFromMax = AppConfig.getLikeablePersonFromMax();
-
-        if (fromLikeablePerson != null) {
-            return RsData.of("S-2", "%s님에 대해서 호감표시가 가능합니다.".formatted(username));
-        }
 
         if (fromLikeablePeople.size() >= likeablePersonFromMax) {
             return RsData.of("F-4", "최대 %d명에 대해서만 호감표시가 가능합니다.".formatted(likeablePersonFromMax));
@@ -208,7 +210,10 @@ public class LikeablePersonService {
             return RsData.of("F-2", "해당 호감표시를 취소할 권한이 없습니다.");
         }
 
+        if (!likeablePerson.isModifyUnlocked()) {
+            return RsData.of("F-5", "호감 사유를 변경할 수 없습니다.");
+        }
 
-        return RsData.of("S-1", "호감표시취소가 가능합니다.");
+        return RsData.of("S-1", "호감 사유 변경이 가능합니다.");
     }
 }
