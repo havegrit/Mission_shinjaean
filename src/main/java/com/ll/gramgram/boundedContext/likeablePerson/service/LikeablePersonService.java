@@ -64,7 +64,7 @@ public class LikeablePersonService {
                 .oldGender(null)
                 .oldAttractiveTypeCode(0)
                 .newGender(null)
-                .newAttractiveTypeCode(0)
+                .newAttractiveTypeCode(attractiveTypeCode)
                 .build();
 
         notificationRepository.save(notification);

@@ -48,6 +48,12 @@
 
 -[x] 내가 받은 알림 목록을 DB에서 정상적으로 받아오려면, InstaMember 객체를 통해 찾는 것이 아닌, InstaMember 객체의 id 컬럼 값으로 찾아야 한다. Notification 테이블에는 id 값만 저장하기 때문
 
+-[ ] `usr/notification/list.html` 사용자가 받은 모든 알림을 표시하기 위한 작업 필요. `th:each` 구문 사용
+
+-[ ] `usr/notification/list.html` 호감 표시 알림과 호감 사유 변경 알림 구분 필요
+
+-[ ] `usr/notification/list. html` gender -> 남자 혹은 여자로 표기할 수 있도록 구현 필요. attractiveTypeCode -> 성격, 외모, 능력으로 표기할 수 있도로 구현 필요.
+
 **[특이사항]**
 
 - 재사용 대기 시간 구현
