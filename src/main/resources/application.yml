@@ -12,6 +12,7 @@ spring:
         enabled: true
   profiles:
     active: dev
+    include: secret
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/gram__dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
@@ -22,38 +23,29 @@ spring:
       client:
         registration:
           kakao:
-            clientId: ${KAKAO_CLIENT_ID}
             scope:
             client-name: Kakao
             authorization-grant-type: authorization_code
-            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
             client-authentication-method: POST
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: profile
           naver:
-            client-id: ${NAVER_CLIENT_ID}
-            client-secret: ${NAVER_CLIENT_SECRET}
             client-name: Naver
             scope: name, email
-            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
             authorization-grant-type: authorization_code
           facebook:
             redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
             client-name: Facebook
             scope:
-            clientId: ${FACEBOOK_CLIENT ID}
-            client-secret: ${FACEBOOK_CLIENT SECRET}
           instagram:
             provider: instagram
             scope: user_profile,user_media
             client-name: Instagram
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
             client-authentication-method: client_secret_post
-            clientId: ${INSTA_CLIENT ID}
-            client-secret: ${INSTA_CLIENT SECRET}
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -87,6 +79,6 @@ logging:
     org.springframework.security: trace
 custom:
   likeablePerson:
-    modifyCoolTime: '#{0}'
+    modifyCoolTime: '#{3 * 60 * 60}'
     from:
       max: 10
