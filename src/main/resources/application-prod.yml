@@ -9,15 +9,15 @@ spring:
       client:
         registration:
           naver:
-            redirect-uri: 'http://101.101.217.17/{action}/oauth2/code/{registrationId}'
+            redirect-uri: '${custom.baseUrl}/{action}/oauth2/code/{registrationId}'
           kakao:
-            redirect-uri: 'http://101.101.217.17/{action}/oauth2/code/{registrationId}'
+            redirect-uri: '${custom.baseUrl}/{action}/oauth2/code/{registrationId}'
           google:
-            redirect-uri: 'http://101.101.217.17/{action}/oauth2/code/{registrationId}'
+            redirect-uri: '${custom.baseUrl}/{action}/oauth2/code/{registrationId}'
           facebook:
-            redirect-uri: 'http://101.101.217.17/{action}/oauth2/code/{registrationId}'
+            redirect-uri: '${custom.baseUrl}/{action}/oauth2/code/{registrationId}'
           instagram:
-            redirect-uri: 'http://101.101.217.17/{action}/oauth2/code/{registrationId}'
+            redirect-uri: '${custom.baseUrl}{action}/oauth2/code/{registrationId}'
   jpa:
     hibernate:
       ddl-auto: update
@@ -32,3 +32,5 @@ logging:
     com.ll.gramgram: INFO
     org.hibernate.orm.jdbc.bind: INFO
     org.hibernate.orm.jdbc.extract: INFO
+custom:
+  baseUrl: 'https://101.101.217.17'
