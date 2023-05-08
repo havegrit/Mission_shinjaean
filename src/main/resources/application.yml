@@ -9,8 +9,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/gram__dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
-    username: root
-    password:
+    username: lldj
+    password: lldJ123414*
   security:
     oauth2:
       client:
@@ -78,3 +78,15 @@ custom:
       max: 10
   site:
     baseUrl: http://localhost
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            devUserOauthId: 2734920156
+          naver:
+            devUserOauthId: C2kmhZFzL2ueVBAvWgIaZON17y3a3HnDaxDRuUmoMuQ
+          google:
+            devUserOauthId:
+          facebook:
+            devUserOauthId: 6061444937304986
