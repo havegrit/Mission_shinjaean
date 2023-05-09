@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
+import com.ll.gramgram.base.baseEntity.BaseEntity;
 import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -124,7 +126,7 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/toList")
-    public String showToList(Model model, String gender, @RequestParam(defaultValue = "0") int attractiveTypeCode) {
+    public String showToList(Model model, String gender, @RequestParam(defaultValue = "0") int attractiveTypeCode, @RequestParam(defaultValue = "0") int sortCode) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
         // 인스타인증을 했는지 체크
@@ -138,6 +140,15 @@ public class LikeablePersonController {
 
             if (attractiveTypeCode != 0) {
                 likeablePeopleStream = likeablePeopleStream.filter(e -> e.getAttractiveTypeCode() == attractiveTypeCode);
+            }
+
+            switch (sortCode) {
+                case 1 -> {
+                    likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate).reversed());
+                }
+                case 2 -> {
+                    likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate));
+                }
             }
 
             List<LikeablePerson> likeablePeople = likeablePeopleStream.collect(Collectors.toList());
