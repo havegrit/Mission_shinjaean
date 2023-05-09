@@ -10,7 +10,7 @@
 **[선택미션]**
 -[ ] 젠킨스를 통해서 리포지터리의 main 브랜치에 커밋 이벤트가 발생하면 자동으로 배포가 진행되도록
 
--[ ] 내가 받은 호감리스트(/usr/likeablePerson/toList)에서 호감사유 필터링기능 구현
+-[x] 내가 받은 호감리스트(/usr/likeablePerson/toList)에서 호감사유 필터링기능 구현
 
 -[ ] 내가 받은 호감리스트(/usr/likeablePerson/toList)에서 정렬기능
 ## 4주차 미션 요약
@@ -31,7 +31,19 @@
 
 - filter 메소드를 통해 좋아요를 표시한 사람의 성별이 `gender`와 같은 호감 데이터만 남긴다.
 
-- 최종적으로 필터링 된 데이터를 Model 객체를 통해 "/usr/likeablePerson/toList"로 전달한다.
+- 최종적으로 필터링 된 데이터를 List 형태로 변환 후, Model 객체를 통해 "/usr/likeablePerson/toList"로 전달한다.
+
+- **++추가++** 페이지 초기 상태에서는 `gender`가 'null' 데이터를 반환하지만, 항목을 선택한 후 다시 '전체'를 선택하면, 비어있는 문자열("")을 반환하게 되므로, 비어있는 문자열에 대해서도 처리가 가능하도록 구현했다.
+
+### 호감 리스트 호감 사유 필터링
+
+- 호감리스트(/usr/likeablePerson/toList) 페이지에서 GET 방식으로 전달되는 `attractiveTypeCode` 데이터를 컨트롤러에서 사용하기 위해, 액션 메서드에 파라미터를 추가
+
+- 컨트롤러에서 전달받는 `attractiveTypeCode` 데이터가 "0"이 아닐 때, 사용자가 받은 호감 표시 목록은 필터링 되어야 한다.
+
+- 이전 성별 필터링을 위해 생성한 stream 객체를 통해(filter 메소드 사용) 호감 데이터 중 `attractiveTypeCode`(클라이언트를 통해 전달 받은 인자 데이터와 LikeablePerson 객체 데이터가 가지고 있는 attractiveTypeCode를 비교)가 일치하는 데이터만 필터링한다.
+
+- 최종적으로 성별 필터링과 호감 사유 필터링을 거친 데이터를 Model 객체를 통해 "/usr/likeablePerson/toList"로 전달
 
 **[특이사항]**
 
