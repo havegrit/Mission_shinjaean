@@ -78,15 +78,3 @@ custom:
       max: 10
   site:
     baseUrl: http://localhost
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            devUserOauthId: 2734920156
-          naver:
-            devUserOauthId: C2kmhZFzL2ueVBAvWgIaZON17y3a3HnDaxDRuUmoMuQ
-          google:
-            devUserOauthId:
-          facebook:
-            devUserOauthId: 6061444937304986
