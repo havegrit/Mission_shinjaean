@@ -75,6 +75,12 @@ public class NotProd {
                 Ut.reflection.setFieldValue(likeablePersonToJae_an_4, "createDate", LocalDateTime.now().minusDays(1));
 
                 LikeablePerson likeablePersonToInstaUserAbcd = likeablePersonService.like(memberUser3, "insta_user_abcd", 2).getData();
+
+                likeablePersonService.like(memberUser7ByGoogle, "insta_user2", 2);
+                likeablePersonService.like(memberUser2, "insta_user4", 2);
+                likeablePersonService.like(memberUser2, "insta_user3", 2);
+                likeablePersonService.like(memberUser5, "insta_user3", 2);
+                likeablePersonService.like(memberUser4, "insta_user3", 2);
             }
         };
     }

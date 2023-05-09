@@ -143,12 +143,14 @@ public class LikeablePersonController {
             }
 
             switch (sortCode) {
-                case 1 -> {
-                    likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate).reversed());
-                }
-                case 2 -> {
-                    likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate));
-                }
+                case 1 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate).reversed());
+                case 2 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate));
+                case 3 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson p) -> p.getFromInstaMember().getLikes(), Comparator.reverseOrder()
+                ));
+                case 4 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson p) -> p.getFromInstaMember().getLikes()
+                ));
             }
 
             List<LikeablePerson> likeablePeople = likeablePeopleStream.collect(Collectors.toList());
