@@ -45,6 +45,12 @@
 
 - 최종적으로 성별 필터링과 호감 사유 필터링을 거친 데이터를 Model 객체를 통해 "/usr/likeablePerson/toList"로 전달
 
+### 호감 리스트 정렬 기능
+- 'NotProd.java' 파일에서 좋아요를 생성하고, 생성 날짜를 수정
+  - Ut.reflection.setFieldValue 메소드 수정
+    
+    => LikeablePerson 클래스가 상속 받은 BaseEntity 클래스의 필드 데이터도 수정이 가능하도록 수정 작업을 진행 
+
 **[특이사항]**
 
 구현 과정에서 아쉬웠던 점 / 궁금했던 점을 정리합니다.

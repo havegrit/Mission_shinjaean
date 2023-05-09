@@ -62,7 +62,11 @@ public class Ut {
             try {
                 field = o.getClass().getDeclaredField(fieldName);
             } catch (NoSuchFieldException e) {
-                return false;
+                try {
+                    field = o.getClass().getSuperclass().getDeclaredField(fieldName);
+                } catch (NoSuchFieldException exception) {
+                    return false;
+                }
             }
 
             field.setAccessible(true);
