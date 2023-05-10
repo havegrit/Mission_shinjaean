@@ -65,9 +65,9 @@ public class NotProd {
                 Ut.reflection.setFieldValue(likeablePersonToInstaUser100, "modifyUnlockDate", LocalDateTime.now().minusSeconds(1));
 
                 // 시간에 따른 정렬 기능 테스트 수행을 위해 호감 표시 생성 날짜 수정
-                LikeablePerson likeablePersonToJae_an_1 = likeablePersonService.like(memberUser2, "jae_an_", 1).getData();
+                LikeablePerson likeablePersonToJae_an_1 = likeablePersonService.like(memberUser2, "jae_an_", 2).getData();
                 Ut.reflection.setFieldValue(likeablePersonToJae_an_1, "createDate", LocalDateTime.now().minusDays(4));
-                LikeablePerson likeablePersonToJae_an_2 = likeablePersonService.like(memberUser3, "jae_an_", 2).getData();
+                LikeablePerson likeablePersonToJae_an_2 = likeablePersonService.like(memberUser3, "jae_an_", 3).getData();
                 Ut.reflection.setFieldValue(likeablePersonToJae_an_2, "createDate", LocalDateTime.now().minusDays(3));
                 LikeablePerson likeablePersonToJae_an_3 = likeablePersonService.like(memberUser4, "jae_an_", 3).getData();
                 Ut.reflection.setFieldValue(likeablePersonToJae_an_3, "createDate", LocalDateTime.now().minusDays(2));

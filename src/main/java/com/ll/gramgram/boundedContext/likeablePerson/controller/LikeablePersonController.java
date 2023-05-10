@@ -161,6 +161,8 @@ public class LikeablePersonController {
                                 return 1;
                             }
                         }).thenComparing(BaseEntity::getCreateDate, Comparator.reverseOrder()));
+                case 6 ->
+                        likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(LikeablePerson::getAttractiveTypeCode).thenComparing(BaseEntity::getCreateDate, Comparator.reverseOrder()));
             }
 
             List<LikeablePerson> likeablePeople = likeablePeopleStream.collect(Collectors.toList());
