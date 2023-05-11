@@ -1,5 +1,6 @@
 package com.ll.gramgram.boundedContext.likeablePerson.controller;
 
+import com.ll.gramgram.base.baseEntity.BaseEntity;
 import com.ll.gramgram.base.rq.Rq;
 import com.ll.gramgram.base.rsData.RsData;
 import com.ll.gramgram.boundedContext.instaMember.entity.InstaMember;
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/usr/likeablePerson")
@@ -90,7 +94,7 @@ public class LikeablePersonController {
     public String showModify(@PathVariable Long id, Model model) {
         LikeablePerson likeablePerson = likeablePersonService.findById(id).orElseThrow();
 
-        RsData canModifyRsData = likeablePersonService.canModifyLike(rq.getMember(), likeablePerson);
+        RsData canModifyRsData = likeablePersonService.canModify(rq.getMember(), likeablePerson);
 
         if (canModifyRsData.isFail()) return rq.historyBack(canModifyRsData);
 
@@ -122,9 +126,49 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/toList")
-    @ResponseBody
-    public String showToList(Model model) {
-        //TODO : showToList 구현해야 함
-        return "usr/likeablePerson/toList 구현해야 함";
+    public String showToList(Model model, String gender, @RequestParam(defaultValue = "0") int attractiveTypeCode, @RequestParam(defaultValue = "0") int sortCode) {
+        InstaMember instaMember = rq.getMember().getInstaMember();
+
+        // 인스타인증을 했는지 체크
+        if (instaMember != null) {
+            // 해당 인스타회원이 좋아하는 사람들 목록
+            Stream<LikeablePerson> likeablePeopleStream = instaMember.getToLikeablePeople().stream();
+
+            if (gender != null && !gender.equals("")) {
+                likeablePeopleStream = likeablePeopleStream.filter(e -> e.getFromInstaMember().getGender().equals(gender));
+            }
+
+            if (attractiveTypeCode != 0) {
+                likeablePeopleStream = likeablePeopleStream.filter(e -> e.getAttractiveTypeCode() == attractiveTypeCode);
+            }
+
+            switch (sortCode) {
+                case 1 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate).reversed());
+                case 2 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate));
+                case 3 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson p) -> p.getFromInstaMember().getLikes(), Comparator.reverseOrder()
+                ));
+                case 4 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson p) -> p.getFromInstaMember().getLikes()
+                ));
+                case 5 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson p) -> p.getFromInstaMember().getGender(), (g1, g2) -> {
+                            if (g1.equals(g2)) {
+                                return 0;
+                            } else if (g1.equals("W")) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }).thenComparing(BaseEntity::getCreateDate, Comparator.reverseOrder()));
+                case 6 ->
+                        likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(LikeablePerson::getAttractiveTypeCode).thenComparing(BaseEntity::getCreateDate, Comparator.reverseOrder()));
+            }
+
+            List<LikeablePerson> likeablePeople = likeablePeopleStream.collect(Collectors.toList());
+            model.addAttribute("likeablePeople", likeablePeople);
+        }
+
+        return "usr/likeablePerson/toList";
     }
 }
