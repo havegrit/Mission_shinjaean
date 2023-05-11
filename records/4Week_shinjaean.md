@@ -75,3 +75,17 @@
   => 자동 배포까지 되도록 작업하지 못 했다.
 
   => jenkins와 Git hub repository를 ssh 로 연결하고, repo 에서 commit 이 발생하면, 자동으로 jenkins 가 pull 받아오는 것 까지는 완료
+
+## 4주차 미션 제출 이후
+
+### 자잘한 리팩토링
+
+- showToList() 메소드의 파라미터 중 `gender`에 @RequestParam(defaultValue = "") 어노테이션 추가. 디폴트 값으로 빈 문자열("")을 받도록 설정
+
+  => `gender`가 null 인지 체크하지 않아도 됨. 값이 비어있지 않을 때에만 로직을 실행하도록 구현
+
+- `createDate` 데이터를 비교하는 게 아닌, `id` 데이터를 비교하도록 수정
+
+- switch 문, 중복 제거
+
+- 가독성을 높이기 위한 변수명 구체화

@@ -126,7 +126,7 @@ public class LikeablePersonController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/toList")
-    public String showToList(Model model, String gender, @RequestParam(defaultValue = "0") int attractiveTypeCode, @RequestParam(defaultValue = "0") int sortCode) {
+    public String showToList(Model model, @RequestParam(defaultValue = "")String gender, @RequestParam(defaultValue = "0") int attractiveTypeCode, @RequestParam(defaultValue = "0") int sortCode) {
         InstaMember instaMember = rq.getMember().getInstaMember();
 
         // 인스타인증을 했는지 체크
@@ -134,25 +134,24 @@ public class LikeablePersonController {
             // 해당 인스타회원이 좋아하는 사람들 목록
             Stream<LikeablePerson> likeablePeopleStream = instaMember.getToLikeablePeople().stream();
 
-            if (gender != null && !gender.equals("")) {
-                likeablePeopleStream = likeablePeopleStream.filter(e -> e.getFromInstaMember().getGender().equals(gender));
+            if (!gender.isEmpty()) {
+                likeablePeopleStream = likeablePeopleStream.filter(likeablePerson -> likeablePerson.getFromInstaMember().getGender().equals(gender));
             }
 
             if (attractiveTypeCode != 0) {
-                likeablePeopleStream = likeablePeopleStream.filter(e -> e.getAttractiveTypeCode() == attractiveTypeCode);
+                likeablePeopleStream = likeablePeopleStream.filter(likeablePerson -> likeablePerson.getAttractiveTypeCode() == attractiveTypeCode);
             }
 
-            switch (sortCode) {
-                case 1 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate).reversed());
-                case 2 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getCreateDate));
-                case 3 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
-                        (LikeablePerson p) -> p.getFromInstaMember().getLikes(), Comparator.reverseOrder()
+            likeablePeopleStream = switch (sortCode) {
+                case 2 -> likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getId));
+                case 3 -> likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson likeablePerson) -> likeablePerson.getFromInstaMember().getLikes(), Comparator.reverseOrder()
                 ));
-                case 4 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
-                        (LikeablePerson p) -> p.getFromInstaMember().getLikes()
+                case 4 -> likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson likeablePerson) -> likeablePerson.getFromInstaMember().getLikes()
                 ));
-                case 5 -> likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(
-                        (LikeablePerson p) -> p.getFromInstaMember().getGender(), (g1, g2) -> {
+                case 5 -> likeablePeopleStream.sorted(Comparator.comparing(
+                        (LikeablePerson likeablePerson) -> likeablePerson.getFromInstaMember().getGender(), (g1, g2) -> {
                             if (g1.equals(g2)) {
                                 return 0;
                             } else if (g1.equals("W")) {
@@ -160,10 +159,10 @@ public class LikeablePersonController {
                             } else {
                                 return 1;
                             }
-                        }).thenComparing(BaseEntity::getCreateDate, Comparator.reverseOrder()));
-                case 6 ->
-                        likeablePeopleStream = likeablePeopleStream.sorted(Comparator.comparing(LikeablePerson::getAttractiveTypeCode).thenComparing(BaseEntity::getCreateDate, Comparator.reverseOrder()));
-            }
+                        }).thenComparing(BaseEntity::getId, Comparator.reverseOrder()));
+                case 6 -> likeablePeopleStream.sorted(Comparator.comparing(LikeablePerson::getAttractiveTypeCode).thenComparing(BaseEntity::getId, Comparator.reverseOrder()));
+                default -> likeablePeopleStream.sorted(Comparator.comparing(BaseEntity::getId).reversed());
+            };
 
             List<LikeablePerson> likeablePeople = likeablePeopleStream.collect(Collectors.toList());
             model.addAttribute("likeablePeople", likeablePeople);

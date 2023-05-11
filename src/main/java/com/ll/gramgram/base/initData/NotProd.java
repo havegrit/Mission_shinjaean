@@ -78,7 +78,8 @@ public class NotProd {
 
                 likeablePersonService.like(memberUser7ByGoogle, "insta_user2", 2);
                 likeablePersonService.like(memberUser2, "insta_user4", 2);
-                likeablePersonService.like(memberUser2, "insta_user3", 2);
+
+                Ut.reflection.setFieldValue(likeablePersonService.like(memberUser2, "insta_user3", 2).getData(), "modifyUnlockDate", LocalDateTime.now().minusSeconds(1));
                 likeablePersonService.like(memberUser5, "insta_user3", 2);
                 likeablePersonService.like(memberUser4, "insta_user3", 2);
             }
